@@ -51,7 +51,10 @@ const initialJovens: Jovem[] = [
     pontos_totais: 120,
     nivel: 1,
     badges: ['Primeiro Acesso'],
-    telefone: '38999812345'
+    telefone: '38999812345',
+    problemas_familiares: 'Sim (Conflitos recorrentes e instabilidade financeira)',
+    problema_fisico_saude: 'Sim (Mãe idosa com problemas graves de hipertensão e diabetes)',
+    percepcao_familia_obs: 'Família em situação de extrema vulnerabilidade com dificuldades de relacionamento e sem rede de apoio.'
   },
   {
     id: 'jovem-2',
@@ -78,7 +81,10 @@ const initialJovens: Jovem[] = [
     pontos_totais: 280,
     nivel: 2,
     badges: ['Primeiro Acesso', 'Frequência Bronze'],
-    telefone: '38988225544'
+    telefone: '38988225544',
+    problemas_familiares: 'Sim (Histórico de vulnerabilidade e fragilidade de vínculos)',
+    problema_fisico_saude: 'Não relatado',
+    percepcao_familia_obs: 'Família acolhedora, porém com sérias dificuldades de subsistência econômica e desemprego.'
   },
   {
     id: 'jovem-3',
@@ -105,7 +111,10 @@ const initialJovens: Jovem[] = [
     pontos_totais: 520,
     nivel: 3,
     badges: ['Primeiro Acesso', 'Frequência Bronze', 'Missão Transporte'],
-    telefone: '38991238899'
+    telefone: '38991238899',
+    problemas_familiares: 'Não',
+    problema_fisico_saude: 'Não (Sem problemas de saúde física relatados)',
+    percepcao_familia_obs: 'Ambiente familiar estruturado, ativo na educação do jovem, boa rede de apoio comunitária.'
   },
   {
     id: 'jovem-4',
@@ -132,7 +141,10 @@ const initialJovens: Jovem[] = [
     pontos_totais: 30,
     nivel: 1,
     badges: [],
-    telefone: '38984013322'
+    telefone: '38984013322',
+    problemas_familiares: 'Sim (Ausência paterna, sobrecarga de tarefas domésticas)',
+    problema_fisico_saude: 'Sim (Irmão mais novo possui asma crônica do tipo severa)',
+    percepcao_familia_obs: 'Mãe solo sobrecarregada, o que levou à necessidade de apoio precoce da jovem pela sobrevivência familiar.'
   },
   {
     id: 'jovem-5',
@@ -159,7 +171,10 @@ const initialJovens: Jovem[] = [
     pontos_totais: 450,
     nivel: 2,
     badges: ['Primeiro Acesso', 'Frequência Bronze', 'Contratado'],
-    telefone: '38995551212'
+    telefone: '38995551212',
+    problemas_familiares: 'Não',
+    problema_fisico_saude: 'Sim (Pai aposentado por invalidez devido a problemas motores)',
+    percepcao_familia_obs: 'Família unida e bem sintonizada com programas sociais, limitada pelas restrições de saúde do provedor.'
   }
 ];
 
@@ -689,6 +704,9 @@ app.post('/api/jovens', (req, res) => {
   novoJovem.nivel = Number(novoJovem.nivel ?? 1);
   novoJovem.badges = novoJovem.badges || ['Primeiro Acesso'];
   novoJovem.telefone = novoJovem.telefone || `3899${Math.floor(10000000 + Math.random() * 90000000)}`;
+  novoJovem.problemas_familiares = novoJovem.problemas_familiares || 'Não relatado';
+  novoJovem.problema_fisico_saude = novoJovem.problema_fisico_saude || 'Não relatado';
+  novoJovem.percepcao_familia_obs = novoJovem.percepcao_familia_obs || 'Nenhuma observação registrada.';
 
   const existingIdx = state.jovens.findIndex((j: Jovem) => j.id === novoJovem.id);
   if (existingIdx !== -1) {

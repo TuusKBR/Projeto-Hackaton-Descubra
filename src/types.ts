@@ -30,6 +30,9 @@ export interface Jovem {
   nivel: number;
   badges: string[];
   telefone?: string;
+  problemas_familiares?: string;
+  problema_fisico_saude?: string;
+  percepcao_familia_obs?: string;
 }
 
 export interface Empresa {
