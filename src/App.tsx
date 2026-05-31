@@ -38,7 +38,9 @@ import {
   Building, 
   School,
   Clock,
-  Edit
+  Edit,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { apiService } from './services/api';
 import { Jovem, Empresa, Vaga, Match, Alerta, AcompanhamentoSocial, Microtarefa, MicrotarefaRealizada, DoacaoPasses, SolicitacaoPasses, ProgressoCurso } from './types';
@@ -172,6 +174,7 @@ export default function App() {
   const [editingPercent, setEditingPercent] = useState<number>(0);
   const [enrollingJovemId, setEnrollingJovemId] = useState<string | null>(null);
   const [enrollingCourseId, setEnrollingCourseId] = useState<string>('');
+  const [expandedStudentId, setExpandedStudentId] = useState<string | null>(null);
 
   // WhatsApp Simulator
   const [whatsappMsg, setWhatsappMsg] = useState('');
@@ -1187,7 +1190,7 @@ export default function App() {
         <div className="lg:col-span-9 xl:col-span-10 flex flex-col gap-6" id="main-content-panels">
           
           {/* ========================================================================================= */}
-          {activeTab.startsWith('coord_') && (
+          {activeTab.startsWith('coord_') && activeTab !== 'coord_cursos' && (
             <div className="space-y-6" id="tab-coordinator">
               
               {/* STAGE METRICS HERO BANNER BAR */}
@@ -2731,7 +2734,10 @@ export default function App() {
                 </div>
               )}
 
-              {/* COORD_CURSOS PANEL */}
+            </div>
+          )}
+
+          {/* COORD_CURSOS PANEL */}
               {activeTab === 'coord_cursos' && (
                 <div id="coord-cursos-card" className="col-span-12 max-w-6xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 shadow-xl space-y-6">
                   <div className="border-b border-slate-900 pb-5">
@@ -2853,6 +2859,8 @@ export default function App() {
                             const mediaProgresso = total > 0
                               ? Math.round(pCursos.reduce((sum, c) => sum + c.progresso_percentual, 0) / total)
                               : 0;
+                            const concluidosList = pCursos.filter(cp => cp.status === 'Concluido');
+                            const andamentoList = pCursos.filter(cp => cp.status !== 'Concluido');
 
                             return (
                               <div key={j.id} className="bg-slate-900 border border-slate-850 hover:border-emerald-500/30 rounded-xl p-5 flex flex-col justify-between transition-all duration-200">
@@ -2898,234 +2906,372 @@ export default function App() {
                                   </div>
 
                                   {/* Active Courses List */}
-                                  <div className="space-y-2.5">
-                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block font-bold">Módulos de Curso:</p>
-                                    {pCursos.length === 0 ? (
-                                      <p className="text-xs text-slate-500 italic font-sans py-1">Nenhum curso iniciado na plataforma ainda.</p>
-                                    ) : (
-                                      <div className="space-y-2 max-h-56 overflow-y-auto pr-1 text-slate-350">
-                                        {pCursos.map(c => {
-                                          let stateBadge = 'bg-slate-950 text-slate-400 border-slate-900';
-                                          if (c.status === 'Iniciado') stateBadge = 'bg-blue-950/80 text-blue-400 border-blue-900/30';
-                                          if (c.status === 'Em Andamento') stateBadge = 'bg-amber-955 text-amber-450 border-amber-905';
-                                          if (c.status === 'Concluido') stateBadge = 'bg-emerald-950/80 text-emerald-400 border-emerald-900/30';
+                                  <div className="space-y-3 pt-1">
+                                    {/* CONCLUDED COURSES SECTION */}
+                                    <div className="space-y-1.5">
+                                      <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1">
+                                        <span className="text-emerald-500">🏆</span> Cursos Concluídos ({concluidosList.length})
+                                      </p>
+                                      
+                                      {concluidosList.length === 0 ? (
+                                        <p className="text-[11px] text-slate-500 italic font-sans pl-1">
+                                          Nenhum curso concluído ainda.
+                                        </p>
+                                      ) : (
+                                        <div className="grid grid-cols-1 gap-1 pl-1">
+                                          {concluidosList.map(c => (
+                                            <div key={c.id} className="flex items-center gap-2 bg-slate-950/40 px-2 py-1.5 rounded border border-emerald-950/30 text-xs">
+                                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                                              <div className="min-w-0 flex-1">
+                                                <span className="text-[11px] text-slate-350 font-medium truncate block">{c.curso_titulo}</span>
+                                              </div>
+                                              <span className="text-[9px] font-mono text-emerald-500 bg-emerald-950/80 px-1 rounded border border-emerald-900/30 font-bold">100%</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
 
-                                          const isEditing = editingProgressId === c.id;
+                                    {/* IN PROGRESS COURSES SECTION */}
+                                    <div className="space-y-1.5 pt-1">
+                                      <p className="text-[10px] font-mono text-slate-400 uppercase tracking-wider font-bold flex items-center gap-1">
+                                        <span className="text-amber-500">⚡</span> Em Andamento / Iniciados ({andamentoList.length})
+                                      </p>
+                                      
+                                      {andamentoList.length === 0 ? (
+                                        <p className="text-[11px] text-slate-500 italic font-sans pl-1">
+                                          Sem cursos em andamento no momento.
+                                        </p>
+                                      ) : (
+                                        <div className="space-y-1.5 pl-1 max-h-56 overflow-y-auto pr-1">
+                                          {andamentoList.map(c => {
+                                            const isEditing = editingProgressId === c.id;
+                                            let stateBadge = 'bg-blue-950/80 text-blue-400 border-blue-905';
+                                            if (c.status === 'Em Andamento') stateBadge = 'bg-slate-950 text-amber-450 border-amber-905';
 
-                                          return (
-                                            <div key={c.id} className="bg-slate-950 border border-slate-900 rounded p-2.5 space-y-1.5 hover:border-slate-800 transition">
-                                              {isEditing ? (
-                                                <div className="space-y-2">
-                                                  <div className="flex items-center justify-between">
-                                                    <span className="text-[10px] text-emerald-400 font-bold line-clamp-1">Editando {c.curso_titulo}</span>
-                                                    <button 
-                                                      type="button"
-                                                      onClick={() => setEditingProgressId(null)}
-                                                      className="text-slate-500 hover:text-slate-300 text-[10px] font-mono focus:outline-none"
-                                                    >
-                                                      [Fechar]
-                                                    </button>
-                                                  </div>
-                                                  
-                                                  {/* Status Selector */}
-                                                  <div className="grid grid-cols-3 gap-1">
-                                                    {(['Iniciado', 'Em Andamento', 'Concluido'] as const).map(st => (
-                                                      <button
-                                                        key={st}
+                                            return (
+                                              <div key={c.id} className="bg-slate-950 border border-slate-900 rounded p-2 text-slate-355 hover:border-slate-800 transition-all text-xs">
+                                                {isEditing ? (
+                                                  <div className="space-y-2.5 p-0.5">
+                                                    <div className="flex items-center justify-between">
+                                                      <span className="text-[10px] text-emerald-400 font-bold line-clamp-1">Ajustar: {c.curso_titulo}</span>
+                                                      <button 
                                                         type="button"
-                                                        onClick={() => {
-                                                          setEditingStatus(st);
-                                                          if (st === 'Concluido') setEditingPercent(100);
-                                                          else if (st === 'Iniciado' && editingPercent > 30) setEditingPercent(10);
-                                                        }}
-                                                        className={`text-[9px] font-sans py-1 rounded border capitalize transition-all ${
-                                                          editingStatus === st 
-                                                            ? 'bg-emerald-900/80 border-emerald-500 text-white font-bold' 
-                                                            : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-350'
-                                                        }`}
+                                                        onClick={() => setEditingProgressId(null)}
+                                                        className="text-slate-500 hover:text-slate-300 text-[10px] font-mono focus:outline-none"
                                                       >
-                                                        {st}
+                                                        [Fechar]
                                                       </button>
-                                                    ))}
-                                                  </div>
-
-                                                  {/* Percentage Picker */}
-                                                  <div className="space-y-1">
-                                                    <div className="flex justify-between items-center text-[9px] font-mono text-slate-500">
-                                                      <span>PROGRESSO DO ALUNO:</span>
-                                                      <span className="text-emerald-400 font-bold">{editingPercent}%</span>
                                                     </div>
-                                                    <div className="flex gap-1.5 items-center">
-                                                      <input 
-                                                        type="range" 
-                                                        min="0" 
-                                                        max="100" 
-                                                        step="5"
-                                                        value={editingPercent}
-                                                        onChange={(e) => setEditingPercent(Number(e.target.value))}
-                                                        className="flex-1 accent-emerald-500 h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer"
-                                                      />
-                                                      <div className="flex gap-1">
-                                                        <button 
+                                                    
+                                                    {/* Status Selector */}
+                                                    <div className="grid grid-cols-3 gap-1">
+                                                      {(['Iniciado', 'Em Andamento', 'Concluido'] as const).map(st => (
+                                                        <button
+                                                          key={st}
                                                           type="button"
-                                                          onClick={() => setEditingPercent(10)}
-                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
-                                                        >10</button>
-                                                        <button 
-                                                          type="button"
-                                                          onClick={() => setEditingPercent(50)}
-                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
-                                                        >50</button>
-                                                        <button 
-                                                          type="button"
-                                                          onClick={() => setEditingPercent(100)}
-                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
-                                                        >100</button>
+                                                          onClick={() => {
+                                                            setEditingStatus(st);
+                                                            if (st === 'Concluido') setEditingPercent(100);
+                                                            else if (st === 'Iniciado' && editingPercent > 35) setEditingPercent(10);
+                                                          }}
+                                                          className={`text-[9px] font-sans py-1 rounded border capitalize transition-all ${
+                                                            editingStatus === st 
+                                                              ? 'bg-emerald-950/90 border-emerald-500 text-white font-bold' 
+                                                              : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-355'
+                                                          }`}
+                                                        >
+                                                          {st}
+                                                        </button>
+                                                      ))}
+                                                    </div>
+
+                                                    {/* Percentage Picker */}
+                                                    <div className="space-y-1">
+                                                      <div className="flex justify-between items-center text-[9px] font-mono text-slate-500">
+                                                        <span>PROGRESSO:</span>
+                                                        <span className="text-emerald-400 font-bold">{editingPercent}%</span>
+                                                      </div>
+                                                      <div className="flex gap-1.5 items-center">
+                                                        <input 
+                                                          type="range" 
+                                                          min="0" 
+                                                          max="100" 
+                                                          step="5"
+                                                          value={editingPercent}
+                                                          onChange={(e) => setEditingPercent(Number(e.target.value))}
+                                                          className="flex-1 accent-emerald-505 h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer"
+                                                        />
+                                                        <div className="flex gap-1">
+                                                          <button 
+                                                            type="button"
+                                                            onClick={() => setEditingPercent(10)}
+                                                            className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                          >10%</button>
+                                                          <button 
+                                                            type="button"
+                                                            onClick={() => setEditingPercent(50)}
+                                                            className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                          >50%</button>
+                                                          <button 
+                                                            type="button"
+                                                            onClick={() => setEditingPercent(100)}
+                                                            className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                          >100%</button>
+                                                        </div>
                                                       </div>
                                                     </div>
-                                                  </div>
 
-                                                  {/* Action Buttons */}
-                                                  <div className="flex justify-end gap-1.5 pt-1">
-                                                    <button
-                                                      type="button"
-                                                      onClick={() => {
-                                                        const targetStatus = editingStatus;
-                                                        const targetPercent = editingPercent;
-                                                        handleAtualizarCursoProgresso(
-                                                          c.curso_id, 
-                                                          c.curso_titulo, 
-                                                          c.categoria, 
-                                                          targetStatus, 
-                                                          targetPercent, 
-                                                          j.id, 
-                                                          j.nome
-                                                        );
-                                                        setEditingProgressId(null);
-                                                      }}
-                                                      className="bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] font-sans font-bold px-2.5 py-1.5 transition whitespace-nowrap cursor-pointer"
-                                                    >
-                                                      Confirmar
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              ) : (
-                                                <div className="space-y-1.5">
-                                                  <div className="flex items-start justify-between gap-1">
-                                                    <span className="text-[11px] text-slate-300 font-medium line-clamp-1">{c.curso_titulo}</span>
-                                                    <div className="flex items-center gap-1.5">
-                                                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase flex-shrink-0 ${stateBadge}`}>
-                                                        {c.status === 'Concluido' ? 'Concluido ✓' : c.status}
-                                                      </span>
+                                                    {/* Action Buttons */}
+                                                    <div className="flex justify-end gap-1.5 pt-1">
                                                       <button
                                                         type="button"
                                                         onClick={() => {
-                                                          setEditingProgressId(c.id);
-                                                          setEditingStatus(c.status);
-                                                          setEditingPercent(c.progresso_percentual);
+                                                          handleAtualizarCursoProgresso(
+                                                            c.curso_id, 
+                                                            c.curso_titulo, 
+                                                            c.categoria, 
+                                                            editingStatus, 
+                                                            editingPercent, 
+                                                            j.id, 
+                                                            j.nome
+                                                          );
+                                                          setEditingProgressId(null);
                                                         }}
-                                                        className="text-slate-500 hover:text-emerald-400 p-0.5 rounded transition cursor-pointer"
-                                                        title="Editar progresso"
+                                                        className="bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] font-sans font-bold px-3 py-1.5 transition cursor-pointer"
                                                       >
-                                                        <Edit className="w-3.5 h-3.5" />
+                                                        Confirmar
                                                       </button>
                                                     </div>
                                                   </div>
-                                                  <div className="flex items-center gap-2">
-                                                    <div className="flex-1 bg-slate-900 h-1 rounded-full overflow-hidden">
-                                                      <div className="h-full bg-emerald-500" style={{ width: `${c.progresso_percentual}%` }} />
+                                                ) : (
+                                                  <div className="space-y-1.5">
+                                                    <div className="flex items-start justify-between gap-1">
+                                                      <span className="text-[11px] text-slate-305 font-medium line-clamp-1">{c.curso_titulo}</span>
+                                                      <div className="flex items-center gap-1 flex-shrink-0">
+                                                        <span className={`text-[8px] font-mono font-bold px-1 py-0.5 rounded border uppercase ${stateBadge}`}>
+                                                          {c.status}
+                                                        </span>
+                                                        <button
+                                                          type="button"
+                                                          onClick={() => {
+                                                            setEditingProgressId(c.id);
+                                                            setEditingStatus(c.status);
+                                                            setEditingPercent(c.progresso_percentual);
+                                                          }}
+                                                          className="text-slate-500 hover:text-emerald-400 p-0.5 rounded transition cursor-pointer"
+                                                          title="Ajustar progresso do estudante"
+                                                        >
+                                                          <Edit className="w-3.5 h-3.5" />
+                                                        </button>
+                                                      </div>
                                                     </div>
-                                                    <span className="text-[9px] font-mono text-slate-500">{c.progresso_percentual}%</span>
+                                                    <div className="flex items-center gap-2">
+                                                      <div className="flex-1 bg-slate-900 h-1 rounded-full overflow-hidden">
+                                                        <div 
+                                                          className={`h-full ${c.status === 'Em Andamento' ? 'bg-amber-500' : 'bg-blue-500'}`} 
+                                                          style={{ width: `${c.progresso_percentual}%` }} 
+                                                        />
+                                                      </div>
+                                                      <span className="text-[9px] font-mono text-slate-500">{c.progresso_percentual}%</span>
+                                                    </div>
                                                   </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    )}
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
 
-                                    {/* Action to enroll in a new course */}
-                                    {(() => {
-                                      const allCourses = [
-                                        ...MEI_COURSES.map(c => ({ ...c, categoria: 'MEI' as const })),
-                                        ...DESCUBRA_JOVEM_COURSES.map(c => ({ ...c, categoria: 'Descubra Jovem' as const }))
-                                      ];
-                                      const availableToEnroll = allCourses.filter(ac => !pCursos.some(pc => pc.curso_id === ac.id));
+                                    {/* COLLAPSIBLE DETAILED ACADEMIC MATRIX (Toggles status on all 8 core courses) */}
+                                    <div className="pt-2 border-t border-slate-850/60">
+                                      <button
+                                        type="button"
+                                        onClick={() => setExpandedStudentId(expandedStudentId === j.id ? null : j.id)}
+                                        className="w-full py-2 bg-slate-950 hover:bg-slate-900 border border-slate-900/60 text-slate-400 hover:text-emerald-400 rounded-lg text-[10px] font-sans font-black flex items-center justify-center gap-1 transition cursor-pointer uppercase tracking-wider"
+                                      >
+                                        {expandedStudentId === j.id ? (
+                                          <>
+                                            <ChevronUp className="w-3.5 h-3.5" />
+                                            <span>Fechar Ficha Acadêmica Geral</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <ChevronDown className="w-3.5 h-3.5" />
+                                            <span>Ver Ficha e Trilha Curricular Completa</span>
+                                          </>
+                                        )}
+                                      </button>
 
-                                      if (availableToEnroll.length === 0) return null;
+                                      {expandedStudentId === j.id && (
+                                        <div className="mt-3 bg-slate-950/80 p-3 rounded-lg border border-slate-850 space-y-3 animate-fade-in text-xs">
+                                          <div className="flex justify-between items-center border-b border-slate-900 pb-1.5">
+                                            <span className="text-[10px] text-slate-400 font-mono font-black uppercase tracking-wider">Trilha Completa (8 Minicursos)</span>
+                                            <span className="text-[9px] text-emerald-400 font-mono font-bold bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-900/20">{concluidos} / 8 concluídos</span>
+                                          </div>
 
-                                      const isEnrolling = enrollingJovemId === j.id;
+                                          {/* Matrix Grid */}
+                                          <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1 text-[11px]">
+                                            {/* Descubra MEI (Módulos de Negócio) */}
+                                            <div className="space-y-1.5">
+                                              <p className="text-[9px] font-mono font-bold text-slate-500 tracking-wider uppercase block">Módulos Descubra MEI</p>
+                                              <div className="grid grid-cols-1 gap-1.5">
+                                                {MEI_COURSES.map(course => {
+                                                  const studentCourse = pCursos.find(pc => pc.curso_id === course.id);
+                                                  const hasCompleted = studentCourse?.status === 'Concluido';
+                                                  const hasActive = studentCourse && studentCourse.status !== 'Concluido';
 
-                                      return (
-                                        <div className="mt-2.5 pt-2 border-t border-slate-850">
-                                          {isEnrolling ? (
-                                            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 space-y-2.5">
-                                              <label className="text-[9px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Escolha o Minicurso:</label>
-                                              <select
-                                                value={enrollingCourseId}
-                                                onChange={(e) => setEnrollingCourseId(e.target.value)}
-                                                className="w-full bg-slate-900 border border-slate-800 text-slate-200 text-[11px] rounded px-2.5 py-2 focus:border-emerald-500 focus:outline-none"
-                                              >
-                                                <option value="">-- Selecione o curso --</option>
-                                                {availableToEnroll.map(ac => (
-                                                  <option key={ac.id} value={ac.id}>
-                                                    [{ac.categoria === 'MEI' ? 'MEI' : 'Jovem'}] {ac.titulo}
-                                                  </option>
-                                                ))}
-                                              </select>
-                                              <div className="flex justify-end gap-1.5">
-                                                <button
-                                                  type="button"
-                                                  onClick={() => {
-                                                    setEnrollingJovemId(null);
-                                                    setEnrollingCourseId('');
-                                                  }}
-                                                  className="text-[10px] text-slate-400 font-sans px-2.5 py-1.5 hover:text-slate-200 cursor-pointer"
-                                                >
-                                                  Cancelar
-                                                </button>
-                                                <button
-                                                  type="button"
-                                                  disabled={!enrollingCourseId}
-                                                  onClick={() => {
-                                                    const selectedCourse = availableToEnroll.find(ac => ac.id === enrollingCourseId);
-                                                    if (selectedCourse) {
-                                                      handleAtualizarCursoProgresso(
-                                                        selectedCourse.id,
-                                                        selectedCourse.titulo,
-                                                        selectedCourse.categoria,
-                                                        'Iniciado',
-                                                        10,
-                                                        j.id,
-                                                        j.nome
-                                                      );
-                                                    }
-                                                    setEnrollingJovemId(null);
-                                                    setEnrollingCourseId('');
-                                                  }}
-                                                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-[10px] font-bold px-3 py-1.5 rounded disabled:opacity-50 cursor-pointer"
-                                                >
-                                                  Matricular
-                                                </button>
+                                                  return (
+                                                    <div 
+                                                      key={course.id} 
+                                                      className={`p-2 rounded border transition text-left flex flex-col gap-1.5 ${
+                                                        hasCompleted ? 'bg-emerald-950/20 border-emerald-900/60 text-slate-300' :
+                                                        hasActive ? 'bg-amber-950/20 border-amber-800/40 text-slate-355' : 
+                                                        'bg-slate-900/40 border-slate-900 hover:border-slate-850 text-slate-400'
+                                                      }`}
+                                                    >
+                                                      <div className="flex justify-between items-start gap-2">
+                                                        <span className="font-bold font-sans text-xs line-clamp-1 text-slate-200">{course.titulo}</span>
+                                                        {hasCompleted ? (
+                                                          <span className="text-[8px] bg-emerald-900/80 text-emerald-400 border border-emerald-800 px-1 rounded uppercase font-bold font-mono">Feito ✓</span>
+                                                        ) : hasActive ? (
+                                                          <span className="text-[8px] bg-amber-950 text-amber-450 border border-amber-800/60 px-1 rounded uppercase font-bold font-mono">{studentCourse.progresso_percentual}%</span>
+                                                        ) : (
+                                                          <span className="text-[8px] bg-slate-950 text-slate-500 border border-slate-850 px-1 rounded uppercase font-mono">Pendente</span>
+                                                        )}
+                                                      </div>
+
+                                                      {/* Inline Progress Bar or Quick Enroll Option */}
+                                                      {studentCourse ? (
+                                                        <div className="flex items-center gap-1.5">
+                                                          <div className="flex-1 bg-slate-900 h-1 rounded overflow-hidden">
+                                                            <div 
+                                                              className={`h-full ${hasCompleted ? 'bg-emerald-500' : 'bg-amber-500'}`} 
+                                                              style={{ width: `${studentCourse.progresso_percentual}%` }} 
+                                                            />
+                                                          </div>
+                                                          <button
+                                                            onClick={() => {
+                                                              setEditingProgressId(studentCourse.id);
+                                                              setEditingStatus(studentCourse.status);
+                                                              setEditingPercent(studentCourse.progresso_percentual);
+                                                            }}
+                                                            className="text-[9px] hover:text-emerald-400 px-1.5 py-0.5 rounded border border-transparent hover:border-slate-800 transition bg-slate-950"
+                                                          >
+                                                            Ajustar
+                                                          </button>
+                                                        </div>
+                                                      ) : (
+                                                        <div className="flex justify-between items-center bg-slate-955/60 p-1 rounded">
+                                                          <span className="text-[9px] text-slate-500 font-mono font-bold">Carga: {course.cargaHoraria}</span>
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              handleAtualizarCursoProgresso(
+                                                                course.id,
+                                                                course.titulo,
+                                                                'MEI',
+                                                                'Iniciado',
+                                                                10,
+                                                                j.id,
+                                                                j.nome
+                                                              );
+                                                              showToast(`✓ Estudante matriculado no curso "${course.titulo}" com 10% de progresso inicial.`);
+                                                            }}
+                                                            className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 hover:border-emerald-990 text-[9px] font-sans rounded transition cursor-pointer"
+                                                          >
+                                                            + Matricular
+                                                          </button>
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  );
+                                                })}
                                               </div>
                                             </div>
-                                          ) : (
-                                            <button
-                                              type="button"
-                                              onClick={() => {
-                                                setEnrollingJovemId(j.id);
-                                                setEnrollingCourseId('');
-                                              }}
-                                              className="w-full py-2 bg-slate-950 hover:bg-slate-900 border border-slate-900/60 text-slate-400 hover:text-emerald-400 rounded text-[10px] font-sans font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
-                                            >
-                                              <Plus className="w-3 h-3" />
-                                              <span>Matricular em Minicurso</span>
-                                            </button>
-                                          )}
+
+                                            {/* Descubra Jovem (Módulos Sociais) */}
+                                            <div className="space-y-1.5 pt-1">
+                                              <p className="text-[9px] font-mono font-bold text-slate-500 tracking-wider uppercase block">Módulos Descubra Jovem</p>
+                                              <div className="grid grid-cols-1 gap-1.5">
+                                                {DESCUBRA_JOVEM_COURSES.map(course => {
+                                                  const studentCourse = pCursos.find(pc => pc.curso_id === course.id);
+                                                  const hasCompleted = studentCourse?.status === 'Concluido';
+                                                  const hasActive = studentCourse && studentCourse.status !== 'Concluido';
+
+                                                  return (
+                                                    <div 
+                                                      key={course.id} 
+                                                      className={`p-2 rounded border transition text-left flex flex-col gap-1.5 ${
+                                                        hasCompleted ? 'bg-emerald-950/20 border-emerald-900/60 text-slate-300' :
+                                                        hasActive ? 'bg-blue-950/20 border-blue-850 text-slate-355' : 
+                                                        'bg-slate-900/40 border-slate-900 hover:border-slate-850 text-slate-400'
+                                                      }`}
+                                                    >
+                                                      <div className="flex justify-between items-start gap-2">
+                                                        <span className="font-bold font-sans text-xs line-clamp-1 text-slate-200">{course.titulo}</span>
+                                                        {hasCompleted ? (
+                                                          <span className="text-[8px] bg-emerald-900/80 text-emerald-400 border border-emerald-800 px-1 rounded uppercase font-bold font-mono">Feito ✓</span>
+                                                        ) : hasActive ? (
+                                                          <span className="text-[8px] bg-blue-950 text-blue-400 border border-blue-800/60 px-1 rounded uppercase font-bold font-mono">{studentCourse.progresso_percentual}%</span>
+                                                        ) : (
+                                                          <span className="text-[8px] bg-slate-950 text-slate-500 border border-slate-850 px-1 rounded uppercase font-mono">Pendente</span>
+                                                        )}
+                                                      </div>
+
+                                                      {/* Inline Progress Bar or Quick Enroll Option */}
+                                                      {studentCourse ? (
+                                                        <div className="flex items-center gap-1.5">
+                                                          <div className="flex-1 bg-slate-900 h-1 rounded overflow-hidden">
+                                                            <div 
+                                                              className={`h-full ${hasCompleted ? 'bg-emerald-500' : 'bg-blue-500'}`} 
+                                                              style={{ width: `${studentCourse.progresso_percentual}%` }} 
+                                                            />
+                                                          </div>
+                                                          <button
+                                                            onClick={() => {
+                                                              setEditingProgressId(studentCourse.id);
+                                                              setEditingStatus(studentCourse.status);
+                                                              setEditingPercent(studentCourse.progresso_percentual);
+                                                            }}
+                                                            className="text-[9px] hover:text-emerald-400 px-1.5 py-0.5 rounded border border-transparent hover:border-slate-800 transition bg-slate-950"
+                                                          >
+                                                            Ajustar
+                                                          </button>
+                                                        </div>
+                                                      ) : (
+                                                        <div className="flex justify-between items-center bg-slate-955/60 p-1 rounded">
+                                                          <span className="text-[9px] text-slate-500 font-mono font-bold">Carga: {course.cargaHoraria}</span>
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              handleAtualizarCursoProgresso(
+                                                                course.id,
+                                                                course.titulo,
+                                                                'Descubra Jovem',
+                                                                'Iniciado',
+                                                                10,
+                                                                j.id,
+                                                                j.nome
+                                                              );
+                                                              showToast(`✓ Estudante matriculado no curso "${course.titulo}" com 10% de progresso inicial.`);
+                                                            }}
+                                                            className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 hover:border-emerald-950 text-[9px] font-sans rounded transition cursor-pointer"
+                                                          >
+                                                            + Matricular
+                                                          </button>
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  );
+                                                })}
+                                              </div>
+                                            </div>
+                                          </div>
                                         </div>
-                                      );
-                                    })()}
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
 
@@ -3288,9 +3434,6 @@ export default function App() {
 
                 </div>
               )}
-
-            </div>
-          )}
 
 
           {/* ========================================================================================= */}
