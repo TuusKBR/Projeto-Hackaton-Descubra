@@ -18,7 +18,9 @@ import {
   Compass, 
   QrCode, 
   Bus, 
-  MessageSquare, 
+  MessageSquare,
+  MessageCircle,
+  List,
   HelpCircle,
   BookOpen,
   GraduationCap,
@@ -35,7 +37,8 @@ import {
   CheckCircle2, 
   Building, 
   School,
-  Clock
+  Clock,
+  Edit
 } from 'lucide-react';
 import { apiService } from './services/api';
 import { Jovem, Empresa, Vaga, Match, Alerta, AcompanhamentoSocial, Microtarefa, MicrotarefaRealizada, DoacaoPasses, SolicitacaoPasses, ProgressoCurso } from './types';
@@ -130,6 +133,12 @@ export default function App() {
     setIsLoggedIn(true);
   };
 
+  const handleLoginAsWithTab = (role: string, tab: string) => {
+    handleRoleSwitch(role);
+    setActiveTab(tab);
+    setIsLoggedIn(true);
+  };
+
   // State arrays from DB API
   const [jovens, setJovens] = useState<Jovem[]>([]);
   const [alertas, setAlertas] = useState<Alerta[]>([]);
@@ -154,9 +163,15 @@ export default function App() {
   const [filterRisco, setFilterRisco] = useState('Todos');
 
   // Course progress search and filters for coordinator dashboard
+  const [cursosSubTab, setCursosSubTab] = useState<'alunos' | 'lista'>('alunos');
   const [cursosSearch, setCursosSearch] = useState('');
   const [cursosFilterCategoria, setCursosFilterCategoria] = useState('Todos');
   const [cursosFilterStatus, setCursosFilterStatus] = useState('Todos');
+  const [editingProgressId, setEditingProgressId] = useState<string | null>(null);
+  const [editingStatus, setEditingStatus] = useState<'Iniciado' | 'Em Andamento' | 'Concluido'>('Iniciado');
+  const [editingPercent, setEditingPercent] = useState<number>(0);
+  const [enrollingJovemId, setEnrollingJovemId] = useState<string | null>(null);
+  const [enrollingCourseId, setEnrollingCourseId] = useState<string>('');
 
   // WhatsApp Simulator
   const [whatsappMsg, setWhatsappMsg] = useState('');
@@ -234,13 +249,7 @@ export default function App() {
   });
 
   // CSV text input
-  const [csvText, setCsvText] = useState(
-    `nome,data_nascimento,genero,bairro,cidade,frequencia_curso,renda_familiar,desempenho,faltas_consecutivas,vulnerabilidade_tipo,ultimo_contato\n` +
-    `Gabriel Souza Bispo,2009-04-18,Masculino,São Geraldo,Pirapora,55,750,ruim,6,Evasão Recente,2026-05-12\n` +
-    `Lorena Martins Vieira,2010-07-01,Feminino,Cidade Jardim,Pirapora,84,1100,regular,2,Pobreza Extrema,2026-05-28\n` +
-    `Carlos Eduardo Melo,2008-11-22,Masculino,Santo Antônio,Pirapora,92,1500,bom,0,Nenhuma,2026-05-29\n` +
-    `Thays Cristine Santos,2011-02-14,Feminino,Vila Rica,Pirapora,35,500,ruim,12,Trabalho Infantil,2026-05-01`
-  );
+  const [csvText, setCsvText] = useState('');
 
   // Success notifications
   const [toast, setToast] = useState<string | null>(null);
@@ -337,7 +346,7 @@ export default function App() {
         cidade: 'Pirapora',
         email: 'minas@minasligas.com'
       });
-      setActiveTab('empresa_vagas');
+      setActiveTab('empresa_match');
     } else if (role === 'assistente_social') {
       setCurrentUser({
         id: 'user-ast-1',
@@ -518,7 +527,7 @@ export default function App() {
         cidade: 'Pirapora'
       });
       await loadAllData();
-      setActiveTab('empresa_vagas');
+      setActiveTab('empresa_match');
     } catch (e) {
       showToast('Erro ao lançar vaga.');
     }
@@ -632,11 +641,23 @@ export default function App() {
   };
 
   // Course progress tracking handler
-  const handleAtualizarCursoProgresso = async (cursoId: string, cursoTitulo: string, categoria: 'MEI' | 'Descubra Jovem', status: 'Iniciado' | 'Em Andamento' | 'Concluido', progressoPercentual: number) => {
+  const handleAtualizarCursoProgresso = async (
+    cursoId: string,
+    cursoTitulo: string,
+    categoria: 'MEI' | 'Descubra Jovem',
+    status: 'Iniciado' | 'Em Andamento' | 'Concluido',
+    progressoPercentual: number,
+    optJovemId?: string,
+    optJovemNome?: string
+  ) => {
     try {
-      const activeYouth = jovens.find(j => j.id === currentUser.id) || jovens[0] || {} as any;
+      const targetId = optJovemId || currentUser.id;
+      const activeYouth = optJovemId 
+        ? (jovens.find(j => j.id === optJovemId) || { nome: optJovemNome || 'Jovem Aprendiz' })
+        : (jovens.find(j => j.id === currentUser.id) || { nome: 'Jovem Aprendiz' });
+
       await apiService.atualizarCursoProgresso({
-        jovemId: currentUser.id,
+        jovemId: targetId,
         jovemNome: activeYouth.nome || 'Jovem Aprendiz',
         cursoId,
         cursoTitulo,
@@ -991,8 +1012,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('coord_mapa');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'coord_mapa' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Map className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'coord_mapa' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Map className="w-4 h-4 text-emerald-400" />
                   <span>Mapa de Calor</span>
                 </button>
 
@@ -1001,8 +1022,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('coord_mesa');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'coord_mesa' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Users className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'coord_mesa' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Users className="w-4 h-4 text-emerald-400" />
                   <span>Monitoramento (Mesa)</span>
                 </button>
 
@@ -1011,8 +1032,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('coord_cadastro');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'coord_cadastro' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Plus className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'coord_cadastro' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Plus className="w-4 h-4 text-emerald-400" />
                   <span>Inserir Novo Jovem</span>
                 </button>
 
@@ -1031,8 +1052,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('coord_cursos');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'coord_cursos' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <BookOpen className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'coord_cursos' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <BookOpen className="w-4 h-4 text-emerald-400" />
                   <span>Acompanhamento de Cursos</span>
                 </button>
               </div>
@@ -1057,9 +1078,29 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('jovem_timeline');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'jovem_timeline' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Clock className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'jovem_timeline' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Clock className="w-4 h-4 text-emerald-400" />
                   <span>Linha do Tempo</span>
+                </button>
+
+                <button 
+                  id="nav-sub-jovem-descubra-mei"
+                  onClick={() => {
+                    setActiveTab('jovem_descubra_mei');
+                  }}
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'jovem_descubra_mei' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <BookOpen className="w-4 h-4 text-emerald-400" />
+                  <span>Descubra MEI (Empreender)</span>
+                </button>
+
+                <button 
+                  id="nav-sub-jovem-descubra-jovem"
+                  onClick={() => {
+                    setActiveTab('jovem_descubra_jovem');
+                  }}
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'jovem_descubra_jovem' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <GraduationCap className="w-4 h-4 text-emerald-400" />
+                  <span>Descubra Jovem (Pré-Aprendiz)</span>
                 </button>
 
                 <button 
@@ -1067,29 +1108,9 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('jovem_suporte');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'jovem_suporte' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <HelpCircle className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'jovem_suporte' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <HelpCircle className="w-4 h-4 text-emerald-400" />
                   <span>Requerer Apoio / Ajuda</span>
-                </button>
-
-                <button 
-                  id="nav-sub-jovem-mei"
-                  onClick={() => {
-                    setActiveTab('jovem_descubra_mei');
-                  }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'jovem_descubra_mei' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <BookOpen className="w-3.5 h-3.5 text-emerald-400/80" />
-                  <span>Descubra MEI (Empreender)</span>
-                </button>
-
-                <button 
-                  id="nav-sub-jovem-descubra"
-                  onClick={() => {
-                    setActiveTab('jovem_descubra_jovem');
-                  }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'jovem_descubra_jovem' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <GraduationCap className="w-3.5 h-3.5 text-emerald-400/80" />
-                  <span>Descubra Jovem (Pré-Aprendiz)</span>
                 </button>
               </div>
             )}
@@ -1099,22 +1120,12 @@ export default function App() {
                 <h2 className="text-xs uppercase tracking-wider font-bold text-slate-400 px-2 py-1 mb-1 font-mono">OPÇÕES DA EMPRESA</h2>
                 
                 <button 
-                  id="nav-tab-empresa"
-                  onClick={() => {
-                    setActiveTab('empresa_vagas');
-                  }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'empresa_vagas' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
-                  <Building className="w-4 h-4 text-emerald-400" />
-                  <span>Painel Empresa (Vagas)</span>
-                </button>
-
-                <button 
                   id="nav-sub-empresa-insert"
                   onClick={() => {
                     setActiveTab('empresa_publicar');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'empresa_publicar' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Plus className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'empresa_publicar' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Plus className="w-4 h-4 text-emerald-400" />
                   <span>Publicar Vaga Ap.</span>
                 </button>
 
@@ -1123,8 +1134,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('empresa_match');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'empresa_match' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Compass className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'empresa_match' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <Compass className="w-4 h-4 text-emerald-400" />
                   <span>Matchmaking Jovem</span>
                 </button>
               </div>
@@ -1149,8 +1160,8 @@ export default function App() {
                   onClick={() => {
                     setActiveTab('social_registrar');
                   }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'social_registrar' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <FileText className="w-3.5 h-3.5 text-emerald-400/80" />
+                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-slate-300 rounded-lg text-sm md:text-base font-bold transition duration-200 border-l-4 ${activeTab === 'social_registrar' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+                  <FileText className="w-4 h-4 text-emerald-400" />
                   <span>Registrar Atendimento</span>
                 </button>
               </div>
@@ -2126,6 +2137,19 @@ export default function App() {
                         Carregar e Processar Planilha de Impacto ✓
                       </button>
                       <button 
+                        id="btn-load-example-csv"
+                        type="button"
+                        onClick={() => setCsvText(
+                          `nome,data_nascimento,genero,bairro,cidade,frequencia_curso,renda_familiar,desempenho,faltas_consecutivas,vulnerabilidade_tipo,ultimo_contato\n` +
+                          `Gabriel Souza Bispo,2009-04-18,Masculino,São Geraldo,Pirapora,55,750,ruim,6,Evasão Recente,2026-05-12\n` +
+                          `Lorena Martins Vieira,2010-07-01,Feminino,Cidade Jardim,Pirapora,84,1100,regular,2,Pobreza Extrema,2026-05-28\n` +
+                          `Carlos Eduardo Melo,2008-11-22,Masculino,Santo Antônio,Pirapora,92,1500,bom,0,Nenhuma,2026-05-29\n` +
+                          `Thays Cristine Santos,2011-02-14,Feminino,Vila Rica,Pirapora,35,500,ruim,12,Trabalho Infantil,2026-05-01`
+                        )}
+                        className="py-4 px-6 hover:bg-slate-900 text-slate-300 hover:text-emerald-400 rounded-xl text-sm md:text-base border border-slate-800 font-mono cursor-pointer transition">
+                        Preencher Exemplo
+                      </button>
+                      <button 
                         id="btn-clear-csv-text"
                         onClick={() => setCsvText('')}
                         className="py-4 px-6 hover:bg-slate-900 text-slate-400 rounded-xl text-sm md:text-base border border-slate-800 font-mono cursor-pointer transition">
@@ -2763,128 +2787,504 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Filter and search bar */}
-                  <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-850 flex flex-col md:flex-row gap-4 items-center justify-between text-xs">
-                    <div className="w-full md:w-1/3 relative">
-                      <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        placeholder="Buscar aluno por nome..."
-                        value={cursosSearch}
-                        onChange={(e) => setCursosSearch(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg pl-10 pr-4 py-2.5 focus:border-emerald-500 focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
-                      <div>
-                        <label className="text-[10px] font-mono text-slate-500 block mb-1">Filtrar Categoria</label>
-                        <select
-                          value={cursosFilterCategoria}
-                          onChange={(e) => setCursosFilterCategoria(e.target.value)}
-                          className="bg-slate-950 border border-slate-800 text-slate-350 text-xs rounded-lg px-4 py-2 focus:border-emerald-500 focus:outline-none"
-                        >
-                          <option value="Todos">Todas as Categorias</option>
-                          <option value="MEI">Descubra MEI</option>
-                          <option value="Descubra Jovem">Descubra Jovem</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[10px] font-mono text-slate-500 block mb-1">Filtrar Status</label>
-                        <select
-                          value={cursosFilterStatus}
-                          onChange={(e) => setCursosFilterStatus(e.target.value)}
-                          className="bg-slate-950 border border-slate-800 text-slate-350 text-xs rounded-lg px-4 py-2 focus:border-emerald-500 focus:outline-none"
-                        >
-                          <option value="Todos">Todos os Status</option>
-                          <option value="Iniciado">Iniciado</option>
-                          <option value="Em Andamento">Em Andamento</option>
-                          <option value="Concluido">Concluído</option>
-                        </select>
-                      </div>
-                    </div>
+                  {/* Vista Switcher */}
+                  <div className="flex border-b border-slate-905 pb-1 gap-2 pt-4">
+                    <button
+                      id="btn-subtab-cursos-alunos"
+                      type="button"
+                      onClick={() => setCursosSubTab('alunos')}
+                      className={`px-4 py-2 font-sans font-bold text-xs rounded-t-lg transition-all duration-150 flex items-center gap-2 border-t border-x ${cursosSubTab === 'alunos' ? 'bg-slate-900 text-emerald-400 border-slate-800' : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/20'}`}
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>Visão Geral por Aluno ({jovens.length})</span>
+                    </button>
+                    <button
+                      id="btn-subtab-cursos-lista"
+                      type="button"
+                      onClick={() => setCursosSubTab('lista')}
+                      className={`px-4 py-2 font-sans font-bold text-xs rounded-t-lg transition-all duration-150 flex items-center gap-2 border-t border-x ${cursosSubTab === 'lista' ? 'bg-slate-900 text-emerald-400 border-slate-800' : 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/20'}`}
+                    >
+                      <List className="w-3.5 h-3.5" />
+                      <span>Todos os Minicursos ({cursosProgresso.length})</span>
+                    </button>
                   </div>
 
-                  {/* Progress Table */}
-                  <div className="bg-slate-900/60 rounded-xl border border-slate-850 overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse text-xs font-sans">
-                        <thead>
-                          <tr className="bg-slate-950 text-slate-400 border-b border-slate-850 text-[10px] font-mono tracking-widest uppercase">
-                            <th className="p-4">Estudante</th>
-                            <th className="p-4">Categoria / Trilha</th>
-                            <th className="p-4">Curso Selecionado</th>
-                            <th className="p-4">Progresso Geral</th>
-                            <th className="p-4">Status</th>
-                            <th className="p-4">Última Interação</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-900 text-slate-300">
-                          {(() => {
-                            const filtered = cursosProgresso.filter(cp => {
-                              const matchSearch = cp.jovem_nome.toLowerCase().includes(cursosSearch.toLowerCase());
-                              const matchCat = cursosFilterCategoria === 'Todos' || cp.categoria === cursosFilterCategoria;
-                              const matchStat = cursosFilterStatus === 'Todos' || cp.status === cursosFilterStatus;
-                              return matchSearch && matchCat && matchStat;
-                            });
+                  {cursosSubTab === 'alunos' ? (
+                    <div className="space-y-6">
+                      {/* Search box for students */}
+                      <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-850 flex flex-col md:flex-row gap-4 items-center justify-between text-xs">
+                        <div className="w-full md:w-1/2 relative">
+                          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="text"
+                            placeholder="Buscar estudante por nome ou bairro..."
+                            value={cursosSearch}
+                            onChange={(e) => setCursosSearch(e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg pl-10 pr-4 py-2.5 focus:border-emerald-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="text-slate-400 text-xs font-sans text-right">
+                          Mostrando <span className="text-white font-bold">{jovens.filter(j => j.nome.toLowerCase().includes(cursosSearch.toLowerCase()) || j.bairro.toLowerCase().includes(cursosSearch.toLowerCase())).length}</span> jovens participantes
+                        </div>
+                      </div>
 
-                            if (filtered.length === 0) {
-                              return (
-                                <tr>
-                                  <td colSpan={6} className="text-center py-12 text-slate-500 font-mono italic">
-                                    Nenhuma evolução ou andamento de curso registrada no filtro selecionado.
-                                  </td>
-                                </tr>
-                              );
-                            }
+                      {/* Students Cards Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {(() => {
+                          const filteredJovens = jovens.filter(j =>
+                            j.nome.toLowerCase().includes(cursosSearch.toLowerCase()) ||
+                            j.bairro.toLowerCase().includes(cursosSearch.toLowerCase())
+                          );
 
-                            return filtered.map((cp) => {
-                              let catBadge = 'bg-blue-950/60 text-blue-400 border-blue-900/30';
-                              if (cp.categoria === 'MEI') catBadge = 'bg-purple-950/60 text-purple-400 border-purple-900/30';
+                          if (filteredJovens.length === 0) {
+                            return (
+                              <div className="col-span-3 text-center py-12 bg-slate-900/30 rounded-xl border border-slate-850 text-slate-500 font-mono italic">
+                                Nenhum jovem encontrado com o termo buscado.
+                              </div>
+                            );
+                          }
 
-                              let statBadge = 'bg-slate-950 text-slate-400 border-slate-900';
-                              if (cp.status === 'Iniciado') statBadge = 'bg-blue-950/85 text-blue-400 border-blue-900/30';
-                              if (cp.status === 'Em Andamento') statBadge = 'bg-amber-950 text-amber-400 border-amber-900/30';
-                              if (cp.status === 'Concluido') statBadge = 'bg-emerald-950 text-emerald-400 border-emerald-900/30';
+                          return filteredJovens.map(j => {
+                            const pCursos = cursosProgresso.filter(cp => cp.jovem_id === j.id);
+                            const total = pCursos.length;
+                            const concluidos = pCursos.filter(cp => cp.status === 'Concluido').length;
+                            const emAndamento = pCursos.filter(cp => cp.status === 'Em Andamento').length;
+                            const iniciados = pCursos.filter(cp => cp.status === 'Iniciado').length;
+                            const mediaProgresso = total > 0
+                              ? Math.round(pCursos.reduce((sum, c) => sum + c.progresso_percentual, 0) / total)
+                              : 0;
 
-                              return (
-                                <tr key={cp.id} className="hover:bg-slate-900/40 transition">
-                                  <td className="p-4 font-bold text-white">{cp.jovem_nome}</td>
-                                  <td className="p-4">
-                                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${catBadge}`}>
-                                      {cp.categoria === 'MEI' ? 'Descubra MEI' : 'Descubra Jovem'}
-                                    </span>
-                                  </td>
-                                  <td className="p-4 font-mono font-bold text-slate-250">{cp.curso_titulo}</td>
-                                  <td className="p-4 w-44">
-                                    <div className="space-y-1">
-                                      <div className="flex justify-between items-center text-[10px] font-mono text-slate-500">
-                                        <span>PROGRESSO:</span>
-                                        <span className="font-bold text-slate-300">{cp.progresso_percentual}%</span>
+                            return (
+                              <div key={j.id} className="bg-slate-900 border border-slate-850 hover:border-emerald-500/30 rounded-xl p-5 flex flex-col justify-between transition-all duration-200">
+                                <div className="space-y-4">
+                                  {/* Student Card Header */}
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-mono font-black text-xs text-white border ${
+                                        j.nivel >= 3 ? 'bg-purple-950 border-purple-500 text-purple-400' :
+                                        j.nivel === 2 ? 'bg-blue-950 border-blue-500 text-blue-400' :
+                                        'bg-slate-900 border-slate-700 text-slate-400'
+                                      }`}>
+                                        NV{j.nivel}
                                       </div>
-                                      <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-slate-900">
-                                        <div 
-                                          className={`h-full ${cp.status === 'Concluido' ? 'bg-emerald-500' : 'bg-amber-500'}`}
-                                          style={{ width: `${cp.progresso_percentual}%` }}
-                                        />
+                                      <div>
+                                        <h4 className="font-sans font-bold text-slate-200 text-sm line-clamp-1">{j.nome}</h4>
+                                        <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+                                          {j.bairro} • {j.idade} anos
+                                        </p>
                                       </div>
                                     </div>
-                                  </td>
-                                  <td className="p-4">
-                                    <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${statBadge}`}>
-                                      {cp.status === 'Concluido' ? 'Concluído ✓' : cp.status}
+                                    <span className="text-[10px] bg-slate-950 px-2 py-0.5 rounded border border-slate-800 text-slate-400 font-mono uppercase">
+                                      {j.score_engajamento} XP
                                     </span>
-                                  </td>
-                                  <td className="p-4 font-mono text-[11px] text-slate-500">{cp.data_atualizacao}</td>
-                                </tr>
-                              );
-                            });
-                          })()}
-                        </tbody>
-                      </table>
+                                  </div>
+
+                                  {/* Student Progress Stats */}
+                                  <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-900 space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-mono text-slate-500">
+                                      <span>APROVEITAMENTO GERAL:</span>
+                                      <span className="font-bold text-emerald-400">{mediaProgresso}%</span>
+                                    </div>
+                                    <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-950">
+                                      <div 
+                                        className="h-full bg-emerald-500 transition-all duration-300"
+                                        style={{ width: `${mediaProgresso}%` }}
+                                      />
+                                    </div>
+                                    <div className="flex justify-between text-[10px] font-sans text-slate-400 pt-1">
+                                      <span>🏁 {concluidos} concluídos</span>
+                                      <span>⏳ {emAndamento + iniciados} em andamento</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Active Courses List */}
+                                  <div className="space-y-2.5">
+                                    <p className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block font-bold">Módulos de Curso:</p>
+                                    {pCursos.length === 0 ? (
+                                      <p className="text-xs text-slate-500 italic font-sans py-1">Nenhum curso iniciado na plataforma ainda.</p>
+                                    ) : (
+                                      <div className="space-y-2 max-h-56 overflow-y-auto pr-1 text-slate-350">
+                                        {pCursos.map(c => {
+                                          let stateBadge = 'bg-slate-950 text-slate-400 border-slate-900';
+                                          if (c.status === 'Iniciado') stateBadge = 'bg-blue-950/80 text-blue-400 border-blue-900/30';
+                                          if (c.status === 'Em Andamento') stateBadge = 'bg-amber-955 text-amber-450 border-amber-905';
+                                          if (c.status === 'Concluido') stateBadge = 'bg-emerald-950/80 text-emerald-400 border-emerald-900/30';
+
+                                          const isEditing = editingProgressId === c.id;
+
+                                          return (
+                                            <div key={c.id} className="bg-slate-950 border border-slate-900 rounded p-2.5 space-y-1.5 hover:border-slate-800 transition">
+                                              {isEditing ? (
+                                                <div className="space-y-2">
+                                                  <div className="flex items-center justify-between">
+                                                    <span className="text-[10px] text-emerald-400 font-bold line-clamp-1">Editando {c.curso_titulo}</span>
+                                                    <button 
+                                                      type="button"
+                                                      onClick={() => setEditingProgressId(null)}
+                                                      className="text-slate-500 hover:text-slate-300 text-[10px] font-mono focus:outline-none"
+                                                    >
+                                                      [Fechar]
+                                                    </button>
+                                                  </div>
+                                                  
+                                                  {/* Status Selector */}
+                                                  <div className="grid grid-cols-3 gap-1">
+                                                    {(['Iniciado', 'Em Andamento', 'Concluido'] as const).map(st => (
+                                                      <button
+                                                        key={st}
+                                                        type="button"
+                                                        onClick={() => {
+                                                          setEditingStatus(st);
+                                                          if (st === 'Concluido') setEditingPercent(100);
+                                                          else if (st === 'Iniciado' && editingPercent > 30) setEditingPercent(10);
+                                                        }}
+                                                        className={`text-[9px] font-sans py-1 rounded border capitalize transition-all ${
+                                                          editingStatus === st 
+                                                            ? 'bg-emerald-900/80 border-emerald-500 text-white font-bold' 
+                                                            : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-350'
+                                                        }`}
+                                                      >
+                                                        {st}
+                                                      </button>
+                                                    ))}
+                                                  </div>
+
+                                                  {/* Percentage Picker */}
+                                                  <div className="space-y-1">
+                                                    <div className="flex justify-between items-center text-[9px] font-mono text-slate-500">
+                                                      <span>PROGRESSO DO ALUNO:</span>
+                                                      <span className="text-emerald-400 font-bold">{editingPercent}%</span>
+                                                    </div>
+                                                    <div className="flex gap-1.5 items-center">
+                                                      <input 
+                                                        type="range" 
+                                                        min="0" 
+                                                        max="100" 
+                                                        step="5"
+                                                        value={editingPercent}
+                                                        onChange={(e) => setEditingPercent(Number(e.target.value))}
+                                                        className="flex-1 accent-emerald-500 h-1 bg-slate-900 rounded-lg appearance-none cursor-pointer"
+                                                      />
+                                                      <div className="flex gap-1">
+                                                        <button 
+                                                          type="button"
+                                                          onClick={() => setEditingPercent(10)}
+                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                        >10</button>
+                                                        <button 
+                                                          type="button"
+                                                          onClick={() => setEditingPercent(50)}
+                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                        >50</button>
+                                                        <button 
+                                                          type="button"
+                                                          onClick={() => setEditingPercent(100)}
+                                                          className="text-[8px] bg-slate-900 border border-slate-800 text-slate-400 px-1 py-0.5 rounded font-mono"
+                                                        >100</button>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+
+                                                  {/* Action Buttons */}
+                                                  <div className="flex justify-end gap-1.5 pt-1">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        const targetStatus = editingStatus;
+                                                        const targetPercent = editingPercent;
+                                                        handleAtualizarCursoProgresso(
+                                                          c.curso_id, 
+                                                          c.curso_titulo, 
+                                                          c.categoria, 
+                                                          targetStatus, 
+                                                          targetPercent, 
+                                                          j.id, 
+                                                          j.nome
+                                                        );
+                                                        setEditingProgressId(null);
+                                                      }}
+                                                      className="bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[10px] font-sans font-bold px-2.5 py-1.5 transition whitespace-nowrap cursor-pointer"
+                                                    >
+                                                      Confirmar
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <div className="space-y-1.5">
+                                                  <div className="flex items-start justify-between gap-1">
+                                                    <span className="text-[11px] text-slate-300 font-medium line-clamp-1">{c.curso_titulo}</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase flex-shrink-0 ${stateBadge}`}>
+                                                        {c.status === 'Concluido' ? 'Concluido ✓' : c.status}
+                                                      </span>
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                          setEditingProgressId(c.id);
+                                                          setEditingStatus(c.status);
+                                                          setEditingPercent(c.progresso_percentual);
+                                                        }}
+                                                        className="text-slate-500 hover:text-emerald-400 p-0.5 rounded transition cursor-pointer"
+                                                        title="Editar progresso"
+                                                      >
+                                                        <Edit className="w-3.5 h-3.5" />
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                  <div className="flex items-center gap-2">
+                                                    <div className="flex-1 bg-slate-900 h-1 rounded-full overflow-hidden">
+                                                      <div className="h-full bg-emerald-500" style={{ width: `${c.progresso_percentual}%` }} />
+                                                    </div>
+                                                    <span className="text-[9px] font-mono text-slate-500">{c.progresso_percentual}%</span>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    )}
+
+                                    {/* Action to enroll in a new course */}
+                                    {(() => {
+                                      const allCourses = [
+                                        ...MEI_COURSES.map(c => ({ ...c, categoria: 'MEI' as const })),
+                                        ...DESCUBRA_JOVEM_COURSES.map(c => ({ ...c, categoria: 'Descubra Jovem' as const }))
+                                      ];
+                                      const availableToEnroll = allCourses.filter(ac => !pCursos.some(pc => pc.curso_id === ac.id));
+
+                                      if (availableToEnroll.length === 0) return null;
+
+                                      const isEnrolling = enrollingJovemId === j.id;
+
+                                      return (
+                                        <div className="mt-2.5 pt-2 border-t border-slate-850">
+                                          {isEnrolling ? (
+                                            <div className="bg-slate-950 p-2.5 rounded-lg border border-slate-850 space-y-2.5">
+                                              <label className="text-[9px] font-mono text-slate-500 block uppercase font-bold tracking-wider">Escolha o Minicurso:</label>
+                                              <select
+                                                value={enrollingCourseId}
+                                                onChange={(e) => setEnrollingCourseId(e.target.value)}
+                                                className="w-full bg-slate-900 border border-slate-800 text-slate-200 text-[11px] rounded px-2.5 py-2 focus:border-emerald-500 focus:outline-none"
+                                              >
+                                                <option value="">-- Selecione o curso --</option>
+                                                {availableToEnroll.map(ac => (
+                                                  <option key={ac.id} value={ac.id}>
+                                                    [{ac.categoria === 'MEI' ? 'MEI' : 'Jovem'}] {ac.titulo}
+                                                  </option>
+                                                ))}
+                                              </select>
+                                              <div className="flex justify-end gap-1.5">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => {
+                                                    setEnrollingJovemId(null);
+                                                    setEnrollingCourseId('');
+                                                  }}
+                                                  className="text-[10px] text-slate-400 font-sans px-2.5 py-1.5 hover:text-slate-200 cursor-pointer"
+                                                >
+                                                  Cancelar
+                                                </button>
+                                                <button
+                                                  type="button"
+                                                  disabled={!enrollingCourseId}
+                                                  onClick={() => {
+                                                    const selectedCourse = availableToEnroll.find(ac => ac.id === enrollingCourseId);
+                                                    if (selectedCourse) {
+                                                      handleAtualizarCursoProgresso(
+                                                        selectedCourse.id,
+                                                        selectedCourse.titulo,
+                                                        selectedCourse.categoria,
+                                                        'Iniciado',
+                                                        10,
+                                                        j.id,
+                                                        j.nome
+                                                      );
+                                                    }
+                                                    setEnrollingJovemId(null);
+                                                    setEnrollingCourseId('');
+                                                  }}
+                                                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-sans text-[10px] font-bold px-3 py-1.5 rounded disabled:opacity-50 cursor-pointer"
+                                                >
+                                                  Matricular
+                                                </button>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                setEnrollingJovemId(j.id);
+                                                setEnrollingCourseId('');
+                                              }}
+                                              className="w-full py-2 bg-slate-950 hover:bg-slate-900 border border-slate-900/60 text-slate-400 hover:text-emerald-400 rounded text-[10px] font-sans font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+                                            >
+                                              <Plus className="w-3 h-3" />
+                                              <span>Matricular em Minicurso</span>
+                                            </button>
+                                          )}
+                                        </div>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+
+                                {/* Active Feedback Triggers */}
+                                <div className="mt-4 pt-3 border-t border-slate-850 flex items-center justify-between gap-2">
+                                  <div className="text-[10px] text-slate-500 font-mono">
+                                    Atualizado: {pCursos[0]?.data_atualizacao || 'Sem dados'}
+                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const phone = j.telefone || '38999812345';
+                                        let msg = `Olá ${j.nome}! Aqui é o Carlos, coordenador do Descubra Pirapora. Vi seu excelente andamento nos cursos, parabéns! Continue firme. 🚀`;
+                                        if (mediaProgresso < 40 && total > 0) {
+                                          msg = `Olá ${j.nome}! Vi que você iniciou o curso "${pCursos[0]?.curso_titulo || 'Descubra'}" mas o progresso está em ${mediaProgresso}%. Precisa de alguma ajuda com internet ou transporte para continuar? Conte conosco!`;
+                                        }
+                                        showToast(`Canal Simulador WhatsApp Ativado! Mensagem enviada para ${j.nome}.`);
+                                        apiService.simularWhatsApp(j.id, msg).catch(() => {});
+                                      }}
+                                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded text-[11px] font-sans font-bold flex items-center gap-1 cursor-pointer transition"
+                                    >
+                                      <MessageCircle className="w-3 h-3" />
+                                      <span>Incentivar</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {/* Filter and search bar */}
+                      <div className="bg-slate-900/40 p-4 rounded-xl border border-slate-850 flex flex-col md:flex-row gap-4 items-center justify-between text-xs">
+                        <div className="w-full md:w-1/3 relative">
+                          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="text"
+                            placeholder="Buscar aluno por nome..."
+                            value={cursosSearch}
+                            onChange={(e) => setCursosSearch(e.target.value)}
+                            className="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg pl-10 pr-4 py-2.5 focus:border-emerald-500 focus:outline-none"
+                          />
+                        </div>
+
+                        <div className="w-full md:w-auto flex flex-col sm:flex-row gap-3">
+                          <div>
+                            <label className="text-[10px] font-mono text-slate-500 block mb-1">Filtrar Categoria</label>
+                            <select
+                              value={cursosFilterCategoria}
+                              onChange={(e) => setCursosFilterCategoria(e.target.value)}
+                              className="bg-slate-950 border border-slate-800 text-slate-350 text-xs rounded-lg px-4 py-2 focus:border-emerald-500 focus:outline-none"
+                            >
+                              <option value="Todos">Todas as Categorias</option>
+                              <option value="MEI">Descubra MEI</option>
+                              <option value="Descubra Jovem">Descubra Jovem</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-mono text-slate-500 block mb-1">Filtrar Status</label>
+                            <select
+                              value={cursosFilterStatus}
+                              onChange={(e) => setCursosFilterStatus(e.target.value)}
+                              className="bg-slate-950 border border-slate-800 text-slate-350 text-xs rounded-lg px-4 py-2 focus:border-emerald-500 focus:outline-none"
+                            >
+                              <option value="Todos">Todos os Status</option>
+                              <option value="Iniciado">Iniciado</option>
+                              <option value="Em Andamento">Em Andamento</option>
+                              <option value="Concluido">Concluído</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Progress Table */}
+                      <div className="bg-slate-900/60 rounded-xl border border-slate-850 overflow-hidden">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse text-xs font-sans">
+                            <thead>
+                              <tr className="bg-slate-950 text-slate-400 border-b border-slate-850 text-[10px] font-mono tracking-widest uppercase">
+                                <th className="p-4">Estudante</th>
+                                <th className="p-4">Categoria / Trilha</th>
+                                <th className="p-4">Curso Selecionado</th>
+                                <th className="p-4">Progresso Geral</th>
+                                <th className="p-4">Status</th>
+                                <th className="p-4">Última Interação</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-900 text-slate-300">
+                              {(() => {
+                                const filtered = cursosProgresso.filter(cp => {
+                                  const matchSearch = cp.jovem_nome.toLowerCase().includes(cursosSearch.toLowerCase());
+                                  const matchCat = cursosFilterCategoria === 'Todos' || cp.categoria === cursosFilterCategoria;
+                                  const matchStat = cursosFilterStatus === 'Todos' || cp.status === cursosFilterStatus;
+                                  return matchSearch && matchCat && matchStat;
+                                });
+
+                                if (filtered.length === 0) {
+                                  return (
+                                    <tr>
+                                      <td colSpan={6} className="text-center py-12 text-slate-500 font-mono italic">
+                                        Nenhuma evolução ou andamento de curso registrada no filtro selecionado.
+                                      </td>
+                                    </tr>
+                                  );
+                                }
+
+                                return filtered.map((cp) => {
+                                  let catBadge = 'bg-blue-950/60 text-blue-400 border-blue-900/30';
+                                  if (cp.categoria === 'MEI') catBadge = 'bg-purple-950/60 text-purple-400 border-purple-900/30';
+
+                                  let statBadge = 'bg-slate-950 text-slate-400 border-slate-900';
+                                  if (cp.status === 'Iniciado') statBadge = 'bg-blue-950/85 text-blue-400 border-blue-900/30';
+                                  if (cp.status === 'Em Andamento') statBadge = 'bg-amber-950 text-amber-400 border-amber-900/30';
+                                  if (cp.status === 'Concluido') statBadge = 'bg-emerald-950 text-emerald-400 border-emerald-950/30';
+
+                                  return (
+                                    <tr key={cp.id} className="hover:bg-slate-900/40 transition">
+                                      <td className="p-4 font-bold text-white">{cp.jovem_nome}</td>
+                                      <td className="p-4">
+                                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${catBadge}`}>
+                                          {cp.categoria === 'MEI' ? 'Descubra MEI' : 'Descubra Jovem'}
+                                        </span>
+                                      </td>
+                                      <td className="p-4 font-mono font-bold text-slate-250">{cp.curso_titulo}</td>
+                                      <td className="p-4 w-44">
+                                        <div className="space-y-1">
+                                          <div className="flex justify-between items-center text-[10px] font-mono text-slate-500">
+                                            <span>PROGRESSO:</span>
+                                            <span className="font-bold text-slate-300">{cp.progresso_percentual}%</span>
+                                          </div>
+                                          <div className="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden border border-slate-900">
+                                            <div 
+                                              className={`h-full ${cp.status === 'Concluido' ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                                              style={{ width: `${cp.progresso_percentual}%` }}
+                                            />
+                                          </div>
+                                        </div>
+                                      </td>
+                                      <td className="p-4">
+                                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border uppercase ${statBadge}`}>
+                                          {cp.status === 'Concluido' ? 'Concluído ✓' : cp.status}
+                                        </span>
+                                      </td>
+                                      <td className="p-4 font-mono text-[11px] text-slate-500">{cp.data_atualizacao}</td>
+                                    </tr>
+                                  );
+                                });
+                              })()}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                 </div>
               )}
@@ -3038,7 +3438,7 @@ export default function App() {
                 )}
 
                 {/* INTERACTIVE ALGORITHM MATCHMAKING RESULT DESK (COMPANY DEMO) */}
-                {(activeTab === 'empresa_vagas' || activeTab === 'empresa_match') && (
+                {activeTab === 'empresa_match' && (
                   <div id="matchmaking-inteligente-card" className="col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 flex flex-col justify-between shadow-xl">
                     <div>
                       <div className="flex items-center gap-3 mb-5 border-b border-slate-900 pb-4">

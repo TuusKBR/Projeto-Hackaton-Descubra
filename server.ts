@@ -7,7 +7,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
-import { Jovem, Empresa, Vaga, Match, Alerta, AcompanhamentoSocial, Microtarefa, MicrotarefaRealizada, DoacaoPasses, SolicitacaoPasses } from './src/types';
+import { Jovem, Empresa, Vaga, Match, Alerta, AcompanhamentoSocial, Microtarefa, MicrotarefaRealizada, DoacaoPasses, SolicitacaoPasses, ProgressoCurso } from './src/types';
 import { calcularRisco } from './src/utils/calculadoraRisco';
 
 const app = express();
@@ -377,6 +377,97 @@ const initialMatches: Match[] = [
   }
 ];
 
+const initialCursosProgresso: ProgressoCurso[] = [
+  {
+    id: 'prog-1',
+    jovem_id: 'jovem-1',
+    jovem_nome: 'João Victor Mendes',
+    curso_id: 'mei-emp',
+    curso_titulo: 'Empreendedorismo na Prática',
+    categoria: 'MEI',
+    status: 'Em Andamento',
+    progresso_percentual: 40,
+    data_atualizacao: '2026-05-28'
+  },
+  {
+    id: 'prog-2',
+    jovem_id: 'jovem-1',
+    jovem_nome: 'João Victor Mendes',
+    curso_id: 'mei-fin',
+    curso_titulo: 'Gestão Financeira & Fluxo de Caixa',
+    categoria: 'MEI',
+    status: 'Iniciado',
+    progresso_percentual: 20,
+    data_atualizacao: '2026-05-30'
+  },
+  {
+    id: 'prog-3',
+    jovem_id: 'jovem-2',
+    jovem_nome: 'Maria Eduarda Fernandes',
+    curso_id: 'mei-mktdig',
+    curso_titulo: 'Marketing Digital para Prestadores',
+    categoria: 'MEI',
+    status: 'Concluido',
+    progresso_percentual: 100,
+    data_atualizacao: '2026-05-26'
+  },
+  {
+    id: 'prog-4',
+    jovem_id: 'jovem-2',
+    jovem_nome: 'Maria Eduarda Fernandes',
+    curso_id: 'dj-soft',
+    curso_titulo: 'Soft Skills: Inteligência Emocional',
+    categoria: 'Descubra Jovem',
+    status: 'Concluido',
+    progresso_percentual: 100,
+    data_atualizacao: '2026-05-25'
+  },
+  {
+    id: 'prog-5',
+    jovem_id: 'jovem-3',
+    jovem_nome: 'Lucas Silva Pereira',
+    curso_id: 'dj-cid',
+    curso_titulo: 'Cidadania e Direitos Sociais do Aprendiz',
+    categoria: 'Descubra Jovem',
+    status: 'Em Andamento',
+    progresso_percentual: 80,
+    data_atualizacao: '2026-05-29'
+  },
+  {
+    id: 'prog-6',
+    jovem_id: 'jovem-3',
+    jovem_nome: 'Lucas Silva Pereira',
+    curso_id: 'dj-math',
+    curso_titulo: 'Raciocínio Lógico & Matemática Comercial',
+    categoria: 'Descubra Jovem',
+    status: 'Concluido',
+    progresso_percentual: 100,
+    data_atualizacao: '2026-05-28'
+  },
+  {
+    id: 'prog-7',
+    jovem_id: 'jovem-4',
+    jovem_nome: 'Ana Beatriz Santos',
+    curso_id: 'mei-emp',
+    curso_titulo: 'Empreendedorismo na Prática',
+    categoria: 'MEI',
+    status: 'Iniciado',
+    progresso_percentual: 10,
+    data_atualizacao: '2026-05-02'
+  },
+  {
+    id: 'prog-8',
+    jovem_id: 'jovem-5',
+    jovem_nome: 'Rafael Oliveira Costa',
+    curso_id: 'dj-soft',
+    curso_titulo: 'Soft Skills: Inteligência Emocional',
+    categoria: 'Descubra Jovem',
+    status: 'Concluido',
+    progresso_percentual: 100,
+    data_atualizacao: '2026-05-28'
+  }
+];
+
 // Complete Local JSON Database wrapper
 const loadState = () => {
   try {
@@ -384,8 +475,9 @@ const loadState = () => {
       const parsed = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
       // Basic structure validation
       if (parsed.jovens && parsed.empresas && parsed.vagas) {
-        if (!parsed.cursosProgresso) {
-          parsed.cursosProgresso = [];
+        if (!parsed.cursosProgresso || parsed.cursosProgresso.length === 0) {
+          parsed.cursosProgresso = initialCursosProgresso;
+          saveState(parsed);
         }
         return parsed;
       }
@@ -406,7 +498,7 @@ const loadState = () => {
     solicitacoesPasses: initialSolicitacoesPasses,
     atendimentos: initialAtendimentos,
     matches: initialMatches,
-    cursosProgresso: []
+    cursosProgresso: initialCursosProgresso
   };
   fs.writeFileSync(DB_FILE, JSON.stringify(state, null, 2), 'utf8');
   return state;
@@ -1343,7 +1435,7 @@ app.post('/api/reset', (req, res) => {
     solicitacoesPasses: initialSolicitacoesPasses,
     atendimentos: initialAtendimentos,
     matches: initialMatches,
-    cursosProgresso: []
+    cursosProgresso: initialCursosProgresso
   };
   saveState(state);
   res.json({ success: true, message: 'Banco de dados restaurado!' });
