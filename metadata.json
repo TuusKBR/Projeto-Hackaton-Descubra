@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Trajetória Descubra+",
+  "description": "Plataforma de acompanhamento e inclusão de jovens vulneráveis em Pirapora-MG.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
