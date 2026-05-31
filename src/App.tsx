@@ -1053,16 +1053,6 @@ export default function App() {
                 </button>
 
                 <button 
-                  id="nav-sub-jovem-wallet"
-                  onClick={() => {
-                    setActiveTab('jovem_renda');
-                  }}
-                  className={`w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm rounded-lg transition duration-200 pl-9 border-l-2 ${activeTab === 'jovem_renda' ? 'bg-slate-800 border-emerald-500 text-white font-bold shadow-sm' : 'border-transparent text-slate-400 hover:bg-slate-900/50 hover:text-white'}`}>
-                  <Coins className="w-3.5 h-3.5 text-emerald-400/80" />
-                  <span>Renda Ponte Digital</span>
-                </button>
-
-                <button 
                   id="nav-sub-jovem-timeline"
                   onClick={() => {
                     setActiveTab('jovem_timeline');
@@ -2236,82 +2226,6 @@ export default function App() {
                   </div>
                 </div>
               )}
-
-              {/* RENDA PONTE DIGITAL UNIT */}
-              {activeTab === 'jovem_renda' && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
-                  <div id="carteira-renda-ponte-card" className="col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 flex flex-col justify-between shadow-xl">
-                    <div>
-                      <div className="flex justify-between items-center mb-4 border-b border-slate-900 pb-4">
-                        <h3 className="font-bold text-white text-xl md:text-2xl uppercase tracking-wide font-mono flex items-center gap-2">
-                          <Coins className="w-6 h-6 text-emerald-400 animate-pulse" />
-                          Renda Ponte Digital: Microtarefas Ativas
-                        </h3>
-                        <span className="text-xs bg-emerald-950 text-emerald-400 border border-emerald-900 px-3.5 py-1.5 rounded-full font-bold font-mono shadow-inner">
-                          Credenciamento de Renda Protetiva
-                        </span>
-                      </div>
-                      <p className="text-sm md:text-base text-slate-300 mb-6 leading-relaxed">
-                        Garanta sustentáculo financeiro imediato realizando pesquisas, formulários de feedback territorial e avaliações comunitárias que auxiliam no planejamento público de Pirapora:
-                      </p>
-
-                      <div className="grid grid-cols-1 gap-6">
-                        {microtarefas.map((task) => {
-                          // Check if already submitted by youth
-                          const prevObj = microtarefasRealizadas.find(
-                            mr => mr.microtarefa_id === task.id && mr.jovem_id === currentUser.id
-                          );
-
-                          return (
-                            <div key={task.id} className="bg-slate-900 p-5 md:p-6 rounded-xl border border-slate-850 shadow-md">
-                              <div className="flex justify-between items-center mb-3 flex-wrap gap-2.5">
-                                <span className="font-bold text-white text-base md:text-lg">{task.titulo}</span>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-xs text-slate-400 font-mono font-semibold">Duração Estimada: <b className="text-slate-200">{task.tempo_estimado}</b></span>
-                                  <span className="text-lg md:text-xl text-emerald-400 font-black font-mono bg-emerald-950/60 px-3.5 py-1 rounded-lg border border-emerald-950">R$ {task.valor}</span>
-                                </div>
-                              </div>
-                              <p className="text-slate-300 text-sm md:text-base mb-5 italic leading-relaxed">"{task.descricao}"</p>
-
-                              {/* Action states depending on submission */}
-                              {!prevObj ? (
-                                <div className="space-y-4">
-                                  <textarea
-                                    id={`input-task-answer-${task.id}`}
-                                    rows={4}
-                                    placeholder="Escreva sua resposta, depoimento ou avaliação detalhadamente aqui..."
-                                    value={microtarefaAnswers[task.id] || ''}
-                                    onChange={(e) => setMicrotarefaAnswers({ ...microtarefaAnswers, [task.id]: e.target.value })}
-                                    className="w-full text-base p-4 bg-slate-950 border border-slate-800 text-white rounded-lg focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 transition h-32 leading-relaxed"
-                                  />
-                                  <button 
-                                    id={`btn-submit-task-${task.id}`}
-                                    onClick={() => handleConcluirMicrotarefa(task.id)}
-                                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg font-mono font-bold uppercase tracking-wide transition cursor-pointer shadow">
-                                    Submeter para homologação social e liberar crédito
-                                  </button>
-                                </div>
-                              ) : (
-                                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs md:text-sm">
-                                  <span className="text-slate-400 font-mono">Submetido eletronicamente em: <b className="text-slate-200">{prevObj.data}</b></span>
-                                  <span className={`font-bold uppercase font-mono px-3.5 py-1.5 rounded-lg border text-xs leading-none ${
-                                    prevObj.status === 'aprovado' ? 'bg-green-950 text-green-400 border-green-800' :
-                                    prevObj.status === 'pendente' ? 'bg-amber-950 text-amber-400 border-amber-900' :
-                                    'bg-red-950 text-red-500 border-red-900'
-                                  }`}>
-                                    Status: {prevObj.status} {prevObj.status === 'aprovado' ? '✓' : '...'}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* LINEA DE TIEMPO INTERACTIVE WIDGET */}
               {activeTab === 'jovem_timeline' && (
                 <div id="linha-tempo-card" className="col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 shadow-xl">
