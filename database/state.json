@@ -1,0 +1,390 @@
+{
+  "jovens": [
+    {
+      "id": "jovem-1",
+      "nome": "João Victor Mendes",
+      "data_nasc": "2010-03-12",
+      "idade": 16,
+      "genero": "Masculino",
+      "raca": "Parda",
+      "bairro": "Santo Antônio",
+      "cidade": "Pirapora",
+      "lat": -17.351,
+      "lng": -44.945,
+      "vulnerabilidade_tipo": "Medida Socioeducativa",
+      "encaminhado_por": "CREAS Pirapora",
+      "escolaridade": "Ensino Médio Incompleto",
+      "status": "pré-aprendizagem",
+      "frequencia": 65,
+      "faltas_consecutivas": 4,
+      "ultimo_contato": "2026-05-10",
+      "renda_familiar": 800,
+      "desempenho": "ruim",
+      "score_engajamento": 45,
+      "score_empregabilidade": 40,
+      "pontos_totais": 120,
+      "nivel": 1,
+      "badges": [
+        "Primeiro Acesso"
+      ],
+      "telefone": "38999812345"
+    },
+    {
+      "id": "jovem-2",
+      "nome": "Maria Eduarda Fernandes",
+      "data_nasc": "2009-08-22",
+      "idade": 17,
+      "genero": "Feminino",
+      "raca": "Preta",
+      "bairro": "Planalto",
+      "cidade": "Pirapora",
+      "lat": -17.338,
+      "lng": -44.928,
+      "vulnerabilidade_tipo": "Egresso de acolhimento",
+      "encaminhado_por": "CRAS Pirapora (Santo Antônio)",
+      "escolaridade": "Ensino Médio Incompleto",
+      "status": "pré-aprendizagem",
+      "frequencia": 82,
+      "faltas_consecutivas": 1,
+      "ultimo_contato": "2026-05-25",
+      "renda_familiar": 1200,
+      "desempenho": "regular",
+      "score_engajamento": 75,
+      "score_empregabilidade": 68,
+      "pontos_totais": 280,
+      "nivel": 2,
+      "badges": [
+        "Primeiro Acesso",
+        "Frequência Bronze"
+      ],
+      "telefone": "38988225544"
+    },
+    {
+      "id": "jovem-3",
+      "nome": "Lucas Silva Pereira",
+      "data_nasc": "2011-01-05",
+      "idade": 15,
+      "genero": "Masculino",
+      "raca": "Branca",
+      "bairro": "Centro",
+      "cidade": "Pirapora",
+      "lat": -17.3444,
+      "lng": -44.9392,
+      "vulnerabilidade_tipo": "Nenhuma",
+      "encaminhado_por": "E.E. Professor Geraldo de Paula Souza",
+      "escolaridade": "Ensino Fundamental Incompleto",
+      "status": "encaminhado",
+      "frequencia": 90,
+      "faltas_consecutivas": 0,
+      "ultimo_contato": "2026-05-29",
+      "renda_familiar": 2000,
+      "desempenho": "bom",
+      "score_engajamento": 95,
+      "score_empregabilidade": 85,
+      "pontos_totais": 520,
+      "nivel": 3,
+      "badges": [
+        "Primeiro Acesso",
+        "Frequência Bronze",
+        "Missão Transporte"
+      ],
+      "telefone": "38991238899"
+    },
+    {
+      "id": "jovem-4",
+      "nome": "Ana Beatriz Santos",
+      "data_nasc": "2010-11-15",
+      "idade": 16,
+      "genero": "Feminino",
+      "raca": "Parda",
+      "bairro": "São Geraldo",
+      "cidade": "Pirapora",
+      "lat": -17.358,
+      "lng": -44.935,
+      "vulnerabilidade_tipo": "Trabalho Infantil",
+      "encaminhado_por": "CRAS Pirapora (Santo Antônio)",
+      "escolaridade": "Ensino Médio Incompleto",
+      "status": "cadastrado",
+      "frequencia": 45,
+      "faltas_consecutivas": 8,
+      "ultimo_contato": "2026-05-02",
+      "renda_familiar": 600,
+      "desempenho": "ruim",
+      "score_engajamento": 20,
+      "score_empregabilidade": 30,
+      "pontos_totais": 30,
+      "nivel": 1,
+      "badges": [],
+      "telefone": "38984013322"
+    },
+    {
+      "id": "jovem-5",
+      "nome": "Rafael Oliveira Costa",
+      "data_nasc": "2009-02-28",
+      "idade": 17,
+      "genero": "Masculino",
+      "raca": "Preta",
+      "bairro": "Vila Rica",
+      "cidade": "Pirapora",
+      "lat": -17.348,
+      "lng": -44.952,
+      "vulnerabilidade_tipo": "Pobreza Extrema",
+      "encaminhado_por": "CREAS Pirapora",
+      "escolaridade": "Ensino Médio Incompleto",
+      "status": "aprendiz_contratado",
+      "frequencia": 78,
+      "faltas_consecutivas": 2,
+      "ultimo_contato": "2026-05-28",
+      "renda_familiar": 1000,
+      "desempenho": "regular",
+      "score_engajamento": 80,
+      "score_empregabilidade": 72,
+      "pontos_totais": 450,
+      "nivel": 2,
+      "badges": [
+        "Primeiro Acesso",
+        "Frequência Bronze",
+        "Contratado"
+      ],
+      "telefone": "38995551212"
+    }
+  ],
+  "empresas": [
+    {
+      "id": "empresa-1",
+      "razao_social": "Minas Ligas (Companhia Ferroligas Minas Gerais)",
+      "cnpj": "17.200.354/0001-90",
+      "bairro": "Industrial",
+      "cidade": "Pirapora",
+      "lat": -17.33,
+      "lng": -44.915,
+      "total_funcionarios": 680,
+      "cota_minima": 34,
+      "cotas_preenchidas": 18
+    },
+    {
+      "id": "empresa-2",
+      "razao_social": "Liasa (Ligas de Alumínio S.A.)",
+      "cnpj": "04.598.112/0001-22",
+      "bairro": "Industrial",
+      "cidade": "Pirapora",
+      "lat": -17.331,
+      "lng": -44.916,
+      "total_funcionarios": 420,
+      "cota_minima": 21,
+      "cotas_preenchidas": 9
+    },
+    {
+      "id": "empresa-3",
+      "razao_social": "Comercial Pirapora Ltda",
+      "cnpj": "25.312.445/0002-11",
+      "bairro": "Centro",
+      "cidade": "Pirapora",
+      "lat": -17.3444,
+      "lng": -44.9392,
+      "total_funcionarios": 120,
+      "cota_minima": 6,
+      "cotas_preenchidas": 4
+    }
+  ],
+  "vagas": [
+    {
+      "empresa_id": "empresa-1",
+      "titulo": "Vaga teste",
+      "descricao": "Atuar como tester",
+      "requisitos": "Vaga teste",
+      "habilidades": [
+        "Comunicação",
+        "Proatividade",
+        "Pontualidade"
+      ],
+      "quantidade": 2,
+      "bairro": "Centro",
+      "cidade": "Pirapora",
+      "status": "aberta",
+      "id": "vaga-1780194959626",
+      "lat": -17.3444,
+      "lng": -44.9392,
+      "empresa_nome": "Minas Ligas (Companhia Ferroligas Minas Gerais)"
+    },
+    {
+      "id": "vaga-1",
+      "empresa_id": "empresa-1",
+      "empresa_nome": "Minas Ligas",
+      "titulo": "Aprendiz Auxiliar Mecânico de Manutenção",
+      "descricao": "Executar serviços auxiliares de manutenção corretiva e preventiva de máquinas e equipamentos industriais instalados, desmontando e lavando peças, transportando ferramentas.",
+      "requisitos": "Ter entre 16 e 21 anos, cursando Ensino Médio, morar em Pirapora ou Buritizeiro, interesse por mecânica industrial.",
+      "habilidades": [
+        "Foco",
+        "Trabalho em Equipe",
+        "Noções de Ferramentas"
+      ],
+      "quantidade": 4,
+      "bairro": "Industrial",
+      "cidade": "Pirapora",
+      "lat": -17.33,
+      "lng": -44.915,
+      "status": "aberta"
+    },
+    {
+      "id": "vaga-2",
+      "empresa_id": "empresa-3",
+      "empresa_nome": "Comercial Pirapora",
+      "titulo": "Aprendiz Assistente Administrativo",
+      "descricao": "Atuar no controle de arquivos corporativos, organização de documentos, atendimento ao cliente inicial, digitação de planilhas e suporte geral ao setor de faturamento.",
+      "requisitos": "Ter entre 14 e 18 anos, cursando ensino regular, conhecimento básico de informática (Office/Digitação).",
+      "habilidades": [
+        "Informática Básica",
+        "Comunicação",
+        "Organização"
+      ],
+      "quantidade": 2,
+      "bairro": "Centro",
+      "cidade": "Pirapora",
+      "lat": -17.3444,
+      "lng": -44.9392,
+      "status": "aberta"
+    },
+    {
+      "id": "vaga-3",
+      "empresa_id": "empresa-2",
+      "empresa_nome": "Liasa S.A.",
+      "titulo": "Auxiliar de Eletricista Predial Aprendiz (SENAI)",
+      "descricao": "Auxiliar na montagem de infraestrutura para fiação elétrica, fixação de conduítes, passagem de cabos e reparos básicos sob supervisão de engenheiro ou técnico.",
+      "requisitos": "Ter de 16 a 21 anos, matriculado no curso SENAI Pirapora de Eletrotécnica.",
+      "habilidades": [
+        "Atenção aos Detalhes",
+        "Raciocínio Lógico",
+        "SENAI"
+      ],
+      "quantidade": 3,
+      "bairro": "Planalto",
+      "cidade": "Pirapora",
+      "lat": -17.338,
+      "lng": -44.928,
+      "status": "aberta"
+    }
+  ],
+  "alertas": [
+    {
+      "id": "alerta-1",
+      "jovem_id": "jovem-1",
+      "jovem_nome": "João Victor Mendes",
+      "jovem_bairro": "Santo Antônio",
+      "tipo": "Frequência Alerta",
+      "gravidade": "alto",
+      "status": "pendente",
+      "descricao": "A frequencia do curso/escola caiu para 65% e há mais de 15 dias que o coordenador não registra contato profissional.",
+      "data_criado": "2026-05-20"
+    },
+    {
+      "id": "alerta-2",
+      "jovem_id": "jovem-4",
+      "jovem_nome": "Ana Beatriz Santos",
+      "jovem_bairro": "São Geraldo",
+      "tipo": "Falta Consecutiva",
+      "gravidade": "alto",
+      "status": "em_atendimento",
+      "descricao": "Detectado 8 faltas consecutivas na escola e vulnerabilidade gravíssima de Trabalho Infantil.",
+      "data_criado": "2026-05-15"
+    }
+  ],
+  "microtarefas": [
+    {
+      "id": "task-1",
+      "titulo": "Pesquisa sobre transporte público em Pirapora",
+      "descricao": "Responda a uma pesquisa rápida sobre quais linhas de ônibus você consome ou se costuma se locomover de bicicleta/a pé pelos bairros Planalto, São Geraldo e Santo Antônio.",
+      "valor": 10,
+      "tempo_estimado": "15 min",
+      "ativa": true
+    },
+    {
+      "id": "task-2",
+      "titulo": "Feedback do Curso de Preparação Profissional",
+      "descricao": "Avalie sua experiência de aprendizado inicial e proponha ideias de melhoria para os professores ou mentores do Programa Descubra local.",
+      "valor": 15,
+      "tempo_estimado": "20 min",
+      "ativa": true
+    },
+    {
+      "id": "task-3",
+      "titulo": "Preenchimento do Perfil Profissional de Habilidades",
+      "descricao": "Complete seu cadastro com três habilidades pessoais e duas metas de carreira (ex: mecânico, vendas, costura).",
+      "valor": 10,
+      "tempo_estimado": "10 min",
+      "ativa": true
+    }
+  ],
+  "microtarefasRealizadas": [],
+  "doacoesPasses": [
+    {
+      "id": "doa-1",
+      "empresa_id": "empresa-1",
+      "empresa_nome": "Minas Ligas",
+      "quantidade": 50,
+      "validade": "2026-07-30",
+      "status": "ativo"
+    },
+    {
+      "id": "doa-2",
+      "empresa_id": "empresa-3",
+      "empresa_nome": "Comercial Pirapora",
+      "quantidade": 25,
+      "validade": "2026-08-15",
+      "status": "ativo"
+    }
+  ],
+  "solicitacoesPasses": [
+    {
+      "id": "sol-1",
+      "jovem_id": "jovem-1",
+      "jovem_nome": "João Victor Mendes",
+      "jovem_bairro": "Santo Antônio",
+      "quantidade": 4,
+      "motivo": "Efetuar deslocamento para entrevista de emprego na Minas Ligas (bairro Industrial). Distância excede 6km.",
+      "status": "aprovada",
+      "qr_code": "DESCUBRA_PASS_VALID_12345",
+      "data": "2026-05-28"
+    },
+    {
+      "id": "sol-2",
+      "jovem_id": "jovem-2",
+      "jovem_nome": "Maria Eduarda Fernandes",
+      "jovem_bairro": "Planalto",
+      "quantidade": 2,
+      "motivo": "Ida ao SENAC para renovação de matrícula escolar e entrega de documentos.",
+      "status": "pendente",
+      "qr_code": "",
+      "data": "2026-05-29"
+    }
+  ],
+  "atendimentos": [
+    {
+      "id": "aten-1",
+      "jovem_id": "jovem-4",
+      "jovem_nome": "Ana Beatriz Santos",
+      "assistente_id": "ast-1",
+      "assistente_nome": "Ana Paula Silva",
+      "data": "2026-05-18",
+      "tema": "Visita Domiciliar - Trabalho Infantil",
+      "relatorio": "Realizada visita no bairro São Geraldo. Conversado com a mãe e com a adolescente sobre a evasão escolar decorrente de trabalho informal. Foi garantido encaminhamento para auxílio emergencial e inclusão prioritária em oficina do SENAC.",
+      "encaminhamentos": "Matricular em curso rápido de Gestão Comercial e garantir ticket transporte solidário."
+    }
+  ],
+  "matches": [
+    {
+      "id": "match-1",
+      "jovem_id": "jovem-1",
+      "jovem_nome": "João Victor Mendes",
+      "jovem_bairro": "Santo Antônio",
+      "vaga_id": "vaga-1",
+      "vaga_titulo": "Aprendiz Auxiliar Mecânico de Manutenção",
+      "empresa_nome": "Minas Ligas",
+      "score_match": 78,
+      "distancia_km": 4.8,
+      "status": "sugerido",
+      "data_interacao": "2026-05-29"
+    }
+  ],
+  "cursosProgresso": []
+}
