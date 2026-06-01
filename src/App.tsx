@@ -492,7 +492,7 @@ export default function App() {
       />
 
       {/* CORE FRAME LAYOUT */}
-      <main className="flex-1 w-full max-w-none px-4 lg:px-8 xl:px-12 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="flex-1 w-full max-w-none px-4 lg:px-6 py-4 flex flex-col lg:flex-row gap-4" id="main-frame-layout">
         
         {/* SIDEBAR NAVIGATION SYSTEM */}
         <DashboardSidebar 
@@ -506,8 +506,8 @@ export default function App() {
           showToast={showToast}
         />
 
-        {/* COMPONENT OUTLET GRID MODULE */}
-        <div className="lg:col-span-9 xl:col-span-10 flex flex-col gap-6" id="dashboard-outlet">
+        {/* COMPONENT OUTLET FLEX MODULE */}
+        <div className="flex-1 min-w-0 flex flex-col gap-4" id="dashboard-outlet">
           
           {/* A. COORDINATOR DASHBOARD PAGE */}
           {currentUser.tipo === 'coordenador' && (

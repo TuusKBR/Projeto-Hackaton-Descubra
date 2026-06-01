@@ -47,155 +47,155 @@ export default function CompanyDashboard({
   };
 
   return (
-    <div className="lg:col-span-9 xl:col-span-10 flex flex-col gap-6" id="company-dashboard-panels">
+    <div className="lg:col-span-9 xl:col-span-10 flex flex-col gap-4" id="company-dashboard-panels">
       
       {activeTab.startsWith('empresa_') && (
-        <div className="space-y-6 animate-fade-in" id="tab-company">
+        <div className="space-y-4 animate-fade-in" id="tab-company">
           
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-fade-in">
-
-            {/* CREATE VAGA REGISTRATION FORM */}
-            {activeTab === 'empresa_publicar' && (
-              <div id="publicar-vaga-card" className="col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 shadow-xl shadow-slate-950/50">
-                <div className="flex items-center gap-3 mb-5 border-b border-slate-900 pb-4">
-                  <Plus className="w-7 h-7 text-emerald-400" />
-                  <div>
-                    <h3 className="font-bold text-white text-lg md:text-xl uppercase tracking-wide font-mono">
-                      Lançar Nova Oportunidade Jovem Aprendiz
-                    </h3>
-                    <p className="text-xs md:text-sm text-slate-400 mt-1">Publique uma vaga corporativa no sistema para que o algoritmo de matchmaking identifique instantaneamente jovens elegíveis pelo critério de proximidade.</p>
-                  </div>
-                </div>
-
-                <form onSubmit={handleCriarVaga} className="space-y-6 w-full">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-sans">
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2">Título Atrativo da Vaga</label>
-                      <input 
-                        id="input-vaga-titulo"
-                        type="text" 
-                        required
-                        placeholder="Ex: Aprendiz em Automação Industrial, Auxiliar de Almoxarifado"
-                        value={newVaga.titulo}
-                        onChange={(e) => setNewVaga({...newVaga, titulo: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-400 font-semibold mb-2 font-mono text-emerald-450 uppercase tracking-wider">Habilidades Desejadas (separadas por vírgula)</label>
-                      <input 
-                        id="input-vaga-habilidades"
-                        type="text" 
-                        placeholder="Ex: Informática Básica, Excel, Trabalho em Equipe, Organização"
-                        value={newVaga.habilidades}
-                        onChange={(e) => setNewVaga({...newVaga, habilidades: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg focus:border-emerald-500 focus:outline-none font-mono"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 font-sans">
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2">Quantidade de Vagas Oferecidas</label>
-                      <input 
-                        id="input-vaga-qtd"
-                        type="number"
-                        min="1"
-                        required
-                        value={newVaga.quantidade}
-                        onChange={(e) => setNewVaga({...newVaga, quantidade: parseInt(e.target.value) || 1})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg font-mono font-bold focus:border-emerald-500 focus:outline-none"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2">Cidade Sede da Atividade</label>
-                      <select 
-                        id="select-vaga-cidade"
-                        value={newVaga.cidade}
-                        onChange={(e) => setNewVaga({...newVaga, cidade: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg font-mono font-medium focus:border-emerald-500 focus:outline-none">
-                        <option value="Pirapora">Pirapora (MG)</option>
-                        <option value="Buritizeiro">Buritizeiro (MG)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2 font-mono">Bairro Polo da Unidade</label>
-                      <select 
-                        id="select-vaga-bairro"
-                        value={newVaga.bairro}
-                        onChange={(e) => setNewVaga({...newVaga, bairro: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg font-mono font-medium">
-                        <option value="Industrial">Bairro Industrial</option>
-                        <option value="Centro">Centro</option>
-                        <option value="Santo Antônio">Santo Antônio</option>
-                        <option value="Planalto">Planalto</option>
-                        <option value="São Geraldo">São Geraldo</option>
-                        <option value="Vila Rica">Vila Rica</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-sans">
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2">Requisitos e Instruções Finais</label>
-                      <textarea 
-                        id="input-vaga-requisitos"
-                        required
-                        rows={3}
-                        placeholder="Ex: Ensino Médio em andamento, preferencialmente morar na região do Santo Antônio ou Centro..."
-                        value={newVaga.requisitos}
-                        onChange={(e) => setNewVaga({...newVaga, requisitos: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3.5 text-white rounded-lg focus:border-emerald-500 focus:outline-none h-20 resize-none leading-relaxed"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2 font-mono">Descrição Breve das Tarefas</label>
-                      <textarea
-                        id="input-vaga-descricao"
-                        required
-                        rows={3}
-                        placeholder="Ex: Atuar na gerência administrativa local, auxiliar no controle de planilhas e atendimento geral..."
-                        value={newVaga.descricao}
-                        onChange={(e) => setNewVaga({...newVaga, descricao: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 text-sm p-3.5 text-white rounded-lg focus:border-emerald-500 focus:outline-none h-20 resize-none leading-relaxed"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="font-sans">
-                    <label className="block text-xs md:text-sm text-slate-300 font-semibold mb-2">Assinatura da Empresa Parceira</label>
-                    <select 
-                      id="select-vaga-empresa"
-                      value={newVaga.empresa_id}
-                      onChange={(e) => setNewVaga({...newVaga, empresa_id: e.target.value})}
-                      className="w-full bg-slate-900 border border-slate-850 text-sm p-3 text-white rounded-lg font-mono font-medium">
-                      <option value="empresa-1">Minas Ligas S.A. (Metalurgia/Logística)</option>
-                      <option value="empresa-2">Liasa S.A. (Produção de Silício Metálico)</option>
-                      <option value="empresa-3">Comercial Pirapora Ltda (Comércio/Varejo)</option>
-                    </select>
-                  </div>
-
-                  <button 
-                    id="btn-criar-vaga"
-                    type="submit" 
-                    className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-sm md:text-base transition uppercase font-mono tracking-wider shadow-lg shadow-emerald-900/30 cursor-pointer">
-                    Lançar Oportunidade no Barramento Descubra ✓
-                  </button>
-                  
-                </form>
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 animate-fade-in">
+ 
+             {/* CREATE VAGA REGISTRATION FORM */}
+             {activeTab === 'empresa_publicar' && (
+               <div id="publicar-vaga-card" className="col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl shadow-slate-950/50">
+                 <div className="flex items-center gap-2.5 mb-3 border-b border-slate-900 pb-2.5">
+                   <Plus className="w-6 h-6 text-emerald-400" />
+                   <div>
+                     <h3 className="font-bold text-white text-sm md:text-base uppercase tracking-wide font-mono">
+                       Lançar Nova Oportunidade Jovem Aprendiz
+                     </h3>
+                     <p className="text-[11px] text-slate-404 mt-0.5">Publique uma vaga corporativa para matchmaking imediato.</p>
+                   </div>
+                 </div>
+ 
+                 <form onSubmit={handleCriarVaga} className="space-y-4 w-full">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 font-sans">
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1">Título Atrativo da Vaga</label>
+                       <input 
+                         id="input-vaga-titulo"
+                         type="text" 
+                         required
+                         placeholder="Ex: Aprendiz em Automação, Auxiliar de Almoxarifado"
+                         value={newVaga.titulo}
+                         onChange={(e) => setNewVaga({...newVaga, titulo: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-2 text-white rounded focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 font-medium"
+                       />
+                     </div>
+ 
+                     <div>
+                       <label className="block text-[11px] text-slate-400 font-semibold mb-1 font-mono text-emerald-450 uppercase tracking-wider">Habilidades Desejadas</label>
+                       <input 
+                         id="input-vaga-habilidades"
+                         type="text" 
+                         placeholder="Ex: Informática Básica, Excel, Trabalho em Equipe"
+                         value={newVaga.habilidades}
+                         onChange={(e) => setNewVaga({...newVaga, habilidades: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-2 text-white rounded focus:border-emerald-500 focus:outline-none font-mono"
+                       />
+                     </div>
+                   </div>
+ 
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 font-sans">
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1">Quantidade de Vagas Oferecidas</label>
+                       <input 
+                         id="input-vaga-qtd"
+                         type="number"
+                         min="1"
+                         required
+                         value={newVaga.quantidade}
+                         onChange={(e) => setNewVaga({...newVaga, quantidade: parseInt(e.target.value) || 1})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-2 text-white rounded font-mono font-bold focus:border-emerald-500 focus:outline-none"
+                       />
+                     </div>
+ 
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1">Cidade Sede da Atividade</label>
+                       <select 
+                         id="select-vaga-cidade"
+                         value={newVaga.cidade}
+                         onChange={(e) => setNewVaga({...newVaga, cidade: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-1.5 text-white rounded font-mono font-medium focus:border-emerald-500 focus:outline-none">
+                         <option value="Pirapora">Pirapora (MG)</option>
+                         <option value="Buritizeiro">Buritizeiro (MG)</option>
+                       </select>
+                     </div>
+ 
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1 font-mono">Bairro Polo da Unidade</label>
+                       <select 
+                         id="select-vaga-bairro"
+                         value={newVaga.bairro}
+                         onChange={(e) => setNewVaga({...newVaga, bairro: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-1.5 text-white rounded font-mono font-medium">
+                         <option value="Industrial">Bairro Industrial</option>
+                         <option value="Centro">Centro</option>
+                         <option value="Santo Antônio">Santo Antônio</option>
+                         <option value="Planalto">Planalto</option>
+                         <option value="São Geraldo">São Geraldo</option>
+                         <option value="Vila Rica">Vila Rica</option>
+                       </select>
+                     </div>
+                   </div>
+ 
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 font-sans">
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1">Requisitos e Instruções Finais</label>
+                       <textarea 
+                         id="input-vaga-requisitos"
+                         required
+                         rows={2}
+                         placeholder="Ex: Ensino Médio em andamento, preferencialmente morar na região..."
+                         value={newVaga.requisitos}
+                         onChange={(e) => setNewVaga({...newVaga, requisitos: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-2 text-white rounded focus:border-emerald-500 focus:outline-none h-14 resize-none leading-relaxed"
+                       />
+                     </div>
+ 
+                     <div>
+                       <label className="block text-[11px] text-slate-300 font-semibold mb-1 font-mono">Descrição Breve das Tarefas</label>
+                       <textarea
+                         id="input-vaga-descricao"
+                         required
+                         rows={2}
+                         placeholder="Ex: Auxiliar no controle de planilhas e atendimento geral..."
+                         value={newVaga.descricao}
+                         onChange={(e) => setNewVaga({...newVaga, descricao: e.target.value})}
+                         className="w-full bg-slate-900 border border-slate-850 text-xs p-2 text-white rounded focus:border-emerald-500 focus:outline-none h-14 resize-none leading-relaxed"
+                       />
+                     </div>
+                   </div>
+ 
+                   <div className="font-sans">
+                     <label className="block text-[11px] text-slate-300 font-semibold mb-1">Assinatura da Empresa Parceira</label>
+                     <select 
+                       id="select-vaga-empresa"
+                       value={newVaga.empresa_id}
+                       onChange={(e) => setNewVaga({...newVaga, empresa_id: e.target.value})}
+                       className="w-full bg-slate-900 border border-slate-850 text-xs p-1.5 text-white rounded font-mono font-medium">
+                       <option value="empresa-1">Minas Ligas S.A. (Metalurgia/Logística)</option>
+                       <option value="empresa-2">Liasa S.A. (Produção de Silicon Metálico)</option>
+                       <option value="empresa-3">Comercial Pirapora Ltda (Comércio/Varejo)</option>
+                     </select>
+                   </div>
+ 
+                   <button 
+                     id="btn-criar-vaga"
+                     type="submit" 
+                     className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-lg text-xs transition uppercase font-mono tracking-wider shadow-lg shadow-emerald-900/30 cursor-pointer">
+                     Lançar Oportunidade no Barramento Descubra ✓
+                   </button>
+                   
+                 </form>
+               </div>
+             )}
 
             {/* INTERACTIVE ALGORITHM MATCHMAKING RESULT DESK (COMPANY DEMO) */}
             {activeTab === 'empresa_match' && (
-              <div id="matchmaking-inteligente-card" className="col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 flex flex-col justify-between shadow-xl">
+              <div id="matchmaking-inteligente-card" className="col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 flex flex-col justify-between shadow-xl">
                 <div>
                   <div className="flex items-center gap-3 mb-5 border-b border-slate-900 pb-4">
-                    <Compass className="w-7 h-7 text-emerald-400" />
+                    <Compass className="w-6 h-6 text-emerald-400" />
                     <div>
                       <h3 className="font-bold text-white text-xl md:text-2xl uppercase tracking-wide font-mono">
                         Algoritmo de Compatibilidade da Vaga (Matchmaking Municipal)
@@ -214,19 +214,19 @@ export default function CompanyDashboard({
                     ) : (
                       vagas.map((v) => {
                         return (
-                          <div key={v.id} className="bg-slate-900/70 p-5 md:p-6 rounded-xl border border-slate-850 shadow-inner">
+                          <div key={v.id} className="bg-slate-900/70 p-3.5 md:p-4 rounded-lg border border-slate-850 shadow-inner">
                             <div className="flex justify-between items-start mb-4 border-b border-slate-950 pb-3 flex-wrap gap-2">
                               <div>
                                 <span className="text-xs uppercase font-extrabold text-emerald-400 font-mono bg-emerald-950 px-3 py-1 rounded border border-emerald-900/30">
                                   {v.empresa_nome} (Polo da vaga: {v.bairro})
                                 </span>
-                                <h4 className="text-base md:text-lg font-bold text-white mt-2.5 uppercase font-mono">{v.titulo}</h4>
+                                <h4 className="text-sm md:text-base font-bold text-white mt-1.5 uppercase font-mono">{v.titulo}</h4>
                               </div>
                               <span className="text-xs md:text-sm text-slate-400 font-mono font-bold bg-slate-950 border border-slate-850 px-3 py-1 rounded-lg">Qtd Autorizada: {v.quantidade}</span>
                             </div>
 
                             {/* MATCH SUGGESTIONS LIST PANEL */}
-                            <div className="space-y-4 mt-4 bg-slate-950/40 p-4 border border-slate-900 rounded-lg">
+                            <div className="space-y-3 mt-3 bg-slate-950/40 p-3 border border-slate-900 rounded-md">
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div className="space-y-0.5">
                                   <span className="block text-xs text-slate-400 font-black uppercase font-mono tracking-wider">Aptidões e Proximidades Computadas:</span>
@@ -238,7 +238,7 @@ export default function CompanyDashboard({
                                   type="button"
                                   id={`btn-ver-recomendacoes-${v.id}`}
                                   onClick={() => setSelectedVacancyForMatch(v)}
-                                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-mono font-black text-xs uppercase text-white rounded-lg transition-all shadow-md hover:shadow-emerald-950/20 flex items-center justify-center gap-2 cursor-pointer self-start sm:self-center"
+                                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-mono font-black text-xs uppercase text-white rounded transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-center"
                                 >
                                   <Sparkles className="w-4 h-4 animate-pulse text-amber-300" />
                                   Ver Recomendações
@@ -283,7 +283,7 @@ export default function CompanyDashboard({
         return (
           <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div 
-              className="bg-slate-950 border border-slate-800 w-full max-w-4xl rounded-2xl shadow-2xl p-6 md:p-8 relative overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
+              className="bg-slate-950 border border-slate-800 w-full max-w-3xl rounded-xl shadow-2xl p-4 md:p-5 relative overflow-y-auto max-h-[85vh] duration-200"
               id="pop-up-recomendacoes-vaga"
             >
               {/* Close button */}
@@ -342,7 +342,7 @@ export default function CompanyDashboard({
                         return (
                           <div 
                             key={j.id} 
-                            className={`p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${medalBg}`}
+                            className={`p-3.5 rounded-lg border flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${medalBg}`}
                           >
                             <div className="absolute top-0 right-0 p-3 bg-slate-900/40 border-l border-b border-inherit rounded-bl-xl font-mono font-black text-xs text-white">
                               {j.pct}% Match
@@ -354,13 +354,13 @@ export default function CompanyDashboard({
                               </span>
                               
                               <div>
-                                <h5 className="font-extrabold text-white text-base md:text-lg tracking-tight leading-tight group-hover:text-amber-300">{j.nome}</h5>
+                                <h5 className="font-extrabold text-white text-sm md:text-base tracking-tight leading-tight group-hover:text-amber-300">{j.nome}</h5>
                                 <span className="text-[10px] text-slate-505 font-mono">
                                   {j.idade} anos • {j.genero}
                                 </span>
                               </div>
 
-                              <div className="space-y-1.5 text-xs font-mono text-slate-350 bg-slate-950/70 p-3 rounded-lg border border-slate-900">
+                              <div className="space-y-1 text-[11px] font-mono text-slate-350 bg-slate-955/70 p-2.5 rounded border border-slate-900">
                                 <div className="flex justify-between">
                                   <span className="text-slate-500 leading-tight">Bairro:</span>
                                   <span className="text-white font-bold max-w-[100px] truncate leading-tight" title={j.bairro}>{j.bairro}</span>
@@ -410,7 +410,7 @@ export default function CompanyDashboard({
                           return (
                             <div 
                               key={j.id} 
-                              className="bg-slate-900/30 hover:bg-slate-900/60 p-4 border border-slate-850 rounded-xl transition duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono"
+                              className="bg-slate-900/30 hover:bg-slate-900/60 p-2.5 md:p-3 border border-slate-850 rounded-lg transition duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono"
                             >
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2.5 flex-wrap">

@@ -127,53 +127,53 @@ export default function CoordinatorDashboard({
       
       {/* ========================================================================================= */}
       {activeTab.startsWith('coord_') && activeTab !== 'coord_cursos' && (
-        <div className="space-y-6" id="tab-coordinator">
+        <div className="space-y-4" id="tab-coordinator">
           
           {/* STAGE METRICS HERO BANNER BAR */}
           {activeTab === 'coord_geral' && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               
               {/* METRIC 1 */}
-              <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col justify-between shadow-md">
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between shadow-md">
                 <div>
-                  <p className="text-xs md:text-sm text-slate-400 uppercase tracking-wider font-semibold font-mono">Jovens Cadastrados</p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mt-1.5">{dbStats?.total || jovens.length}</h3>
+                  <p className="text-[10px] md:text-xs text-slate-400 uppercase tracking-wider font-semibold font-mono">Jovens Cadastrados</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-1">{dbStats?.total || jovens.length}</h3>
                 </div>
-                <div className="mt-3 text-xs md:text-sm text-emerald-400 font-medium flex items-center gap-1">
-                  <span>100% integrados no sistema</span>
+                <div className="mt-2 text-xs text-emerald-400 font-medium flex items-center gap-1">
+                  <span>100% integrados</span>
                 </div>
               </div>
 
               {/* METRIC 2 */}
-              <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 flex flex-col justify-between shadow-md">
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between shadow-md">
                 <div>
-                  <p className="text-xs md:text-sm text-slate-400 uppercase tracking-wider font-semibold font-mono">Contratados (Menor Aprendiz)</p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-emerald-400 mt-1.5">{dbStats?.contratados || 0}</h3>
+                  <p className="text-[10px] md:text-xs text-slate-400 uppercase tracking-wider font-semibold font-mono">Contratados</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-emerald-400 mt-1">{dbStats?.contratados || 0}</h3>
                 </div>
-                <div className="mt-3 text-xs md:text-sm text-slate-400 font-medium font-mono">
+                <div className="mt-2 text-xs text-slate-400 font-medium font-mono">
                   Adotados em vagas locais
                 </div>
               </div>
 
               {/* METRIC 3 - MANDATORY METRIC: Adotados vs Deixados de Lado */}
-              <div className="bg-slate-950 p-6 rounded-xl border-2 border-orange-500/30 bg-orange-950/20 flex flex-col justify-between relative overflow-hidden shadow-md">
-                <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 text-orange-500/10 font-bold text-8xl pointer-events-none font-mono">!</div>
+              <div className="bg-slate-950 p-4 rounded-xl border-2 border-orange-500/30 bg-orange-950/25 flex flex-col justify-between relative overflow-hidden shadow-md">
+                <div className="absolute right-0 top-0 translate-x-2 -translate-y-2 text-orange-500/10 font-bold text-6xl pointer-events-none font-mono">!</div>
                 <div>
-                  <p className="text-xs md:text-sm text-orange-400 uppercase tracking-wider font-bold font-mono">Aguardando Vaga</p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-orange-400 mt-1.5">{dbStats?.elegiveisSemVaga || 0}</h3>
+                  <p className="text-[10px] md:text-xs text-orange-405 uppercase tracking-wider font-bold font-mono">Aguardando Vaga</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-orange-400 mt-1">{dbStats?.elegiveisSemVaga || 0}</h3>
                 </div>
-                <div className="mt-3 text-xs md:text-sm text-orange-200 font-medium">
-                  "Deixados de Lado" elegíveis sem contratação
+                <div className="mt-2 text-xs text-orange-200 font-medium">
+                  Elegíveis sem contratação
                 </div>
               </div>
 
               {/* METRIC 4 - MANDATORY METRIC: Mulheres vinculadas */}
-              <div className="bg-slate-950 p-6 rounded-xl border-2 border-emerald-500/20 flex flex-col justify-between shadow-md">
+              <div className="bg-slate-950 p-4 rounded-xl border-2 border-emerald-500/20 flex flex-col justify-between shadow-md">
                 <div>
-                  <p className="text-xs md:text-sm text-emerald-400 uppercase tracking-wider font-bold font-mono">Inclusão Feminina/Trans</p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mt-1.5">{dbStats?.mulheresVinculadas || 0}%</h3>
+                  <p className="text-[10px] md:text-xs text-emerald-405 uppercase tracking-wider font-bold font-mono">Inclusão Feminina/Trans</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mt-1">{dbStats?.mulheresVinculadas || 0}%</h3>
                 </div>
-                <p className="mt-3 text-xs md:text-sm text-slate-400 font-medium font-mono">Taxa contratada do total feminino</p>
+                <p className="mt-2 text-xs text-slate-400 font-medium font-mono">Taxa contratada</p>
               </div>
 
             </div>
@@ -181,42 +181,42 @@ export default function CoordinatorDashboard({
 
           {/* RISK TRACKERS DECK */}
           {activeTab === 'coord_geral' && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full bg-red-600 animate-pulse" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-3.5 h-3.5 rounded-full bg-red-600 animate-pulse" />
                   <div>
-                    <h4 className="font-semibold text-slate-200 text-sm md:text-base">Risco Alto (SOS)</h4>
-                    <p className="text-xs md:text-sm text-slate-400">Emergência social ou abandono</p>
+                    <h4 className="font-semibold text-slate-200 text-xs md:text-sm">Risco Alto (SOS)</h4>
+                    <p className="text-[11px] text-slate-400">Emergência ou abandono</p>
                   </div>
                 </div>
-                <span className="text-xl font-bold text-red-500 bg-red-950/40 px-3 py-1 rounded font-mono">
+                <span className="text-lg font-bold text-red-500 bg-red-950/40 px-2.5 py-0.5 rounded font-mono">
                   {dbStats?.altoRisco || 0}
                 </span>
               </div>
 
-              <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full bg-amber-500" />
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-3.5 h-3.5 rounded-full bg-amber-500" />
                   <div>
-                    <h4 className="font-semibold text-slate-200 text-sm md:text-base">Risco Médio</h4>
-                    <p className="text-xs md:text-sm text-slate-405 text-slate-400">Faltas iniciais registradas</p>
+                    <h4 className="font-semibold text-slate-200 text-xs md:text-sm">Risco Médio</h4>
+                    <p className="text-[11px] text-slate-400">Faltas iniciais registradas</p>
                   </div>
                 </div>
-                <span className="text-xl font-bold text-amber-500 bg-amber-950/40 px-3 py-1 rounded font-mono">
+                <span className="text-lg font-bold text-amber-500 bg-amber-950/40 px-2.5 py-0.5 rounded font-mono">
                   {dbStats?.medioRisco ?? 0}
                 </span>
               </div>
 
-              <div className="bg-slate-950 p-5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded-full bg-emerald-500" />
+              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between shadow-md">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-3.5 h-3.5 rounded-full bg-emerald-500" />
                   <div>
-                    <h4 className="font-semibold text-slate-200 text-sm md:text-base">Sob Controle</h4>
-                    <p className="text-xs md:text-sm text-slate-405 text-slate-400">Frequência e contato estáveis</p>
+                    <h4 className="font-semibold text-slate-200 text-xs md:text-sm">Sob Controle</h4>
+                    <p className="text-[11px] text-slate-400">Frequência e contato estáveis</p>
                   </div>
                 </div>
-                <span className="text-xl font-bold text-emerald-400 bg-emerald-950/40 px-3 py-1 rounded font-mono">
+                <span className="text-lg font-bold text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded font-mono">
                   {dbStats?.baixoRisco ?? 0}
                 </span>
               </div>
@@ -229,42 +229,42 @@ export default function CoordinatorDashboard({
 
               {/* NEIGHBORHOOD MAP OF HEAT */}
               {activeTab === 'coord_mapa' && (
-                <div id="mapa-calor-card" className="lg:col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 shadow-xl">
-                  <div className="flex items-center gap-3 mb-4 border-b border-slate-900 pb-4">
-                    <Map className="w-7 h-7 text-emerald-400 animate-pulse" />
+                <div id="mapa-calor-card" className="lg:col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl">
+                  <div className="flex items-center gap-2.5 mb-3 border-b border-slate-900 pb-2.5">
+                    <Map className="w-6 h-6 text-emerald-400 animate-pulse" />
                     <div>
-                      <h3 className="font-bold text-white text-xl md:text-2xl uppercase tracking-tight font-mono">
+                      <h3 className="font-bold text-white text-lg md:text-xl uppercase tracking-tight font-mono">
                         Mapa de Calor de Pirapora
                       </h3>
-                      <p className="text-sm text-slate-400 mt-1">Adensamento de vulnerabilidade e taxa de empregabilidade real por microrregião de atuação</p>
+                      <p className="text-xs text-slate-400 mt-0.5">Adensamento de vulnerabilidade e taxa de empregabilidade real por microrregião de atuação</p>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {dbStats?.bairroStats ? (
                       dbStats.bairroStats.map((st: any) => {
-                        const statusTag = st.taxa_contratacao > 65 ? { text: 'Estabilidade Social', color: 'bg-green-950 text-green-300 border-green-800' } :
-                                          st.taxa_contratacao > 35 ? { text: 'Atenção Requerida', color: 'bg-amber-950 text-amber-300 border-amber-900' } :
-                                          { text: 'Ação Urgente CRAS', color: 'bg-red-950 text-red-300 border-red-900' };
+                        const statusTag = st.taxa_contratacao > 65 ? { text: 'Estabilidade', color: 'bg-green-950 text-green-300 border-green-800' } :
+                                          st.taxa_contratacao > 35 ? { text: 'Atenção', color: 'bg-amber-950 text-amber-300 border-amber-900' } :
+                                          { text: 'CRAS Urgente', color: 'bg-red-950 text-red-300 border-red-900' };
 
                         return (
-                          <div key={st.bairro} className="bg-slate-900 p-5 md:p-6 rounded-xl border border-slate-800/80 hover:border-slate-700/85 transition duration-200 shadow-md flex flex-col justify-between">
+                          <div key={st.bairro} className="bg-slate-900 p-4 rounded-lg border border-slate-800/80 hover:border-slate-700/85 transition duration-200 shadow-md flex flex-col justify-between">
                             <div>
-                              <div className="flex justify-between items-start gap-2 mb-3">
-                                <span className="font-extrabold text-white text-lg md:text-xl font-mono tracking-tight">{st.bairro}</span>
-                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full uppercase border ${statusTag.color}`}>
+                              <div className="flex justify-between items-start gap-2 mb-2">
+                                <span className="font-extrabold text-white text-base font-mono tracking-tight">{st.bairro}</span>
+                                <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full uppercase border ${statusTag.color}`}>
                                   {statusTag.text}
                                 </span>
                               </div>
 
-                              <div className="flex items-baseline justify-between mb-4">
-                                <span className="text-xs text-slate-400 uppercase font-mono font-semibold">Taxa de Inclusão:</span>
-                                <span className="text-2xl md:text-3xl font-black text-emerald-400 font-mono">
+                              <div className="flex items-baseline justify-between mb-2">
+                                <span className="text-[10px] text-slate-400 uppercase font-mono font-semibold">Inclusão:</span>
+                                <span className="text-xl font-black text-emerald-400 font-mono">
                                   {st.taxa_contratacao}%
                                 </span>
                               </div>
                               
-                              <div className="w-full h-3.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800 shadow-inner">
+                              <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800 shadow-inner">
                                 <div 
                                   className="h-full rounded-full transition-all duration-300"
                                   style={{ 
@@ -275,21 +275,21 @@ export default function CoordinatorDashboard({
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2 mt-5 pt-3.5 border-t border-slate-800 text-xs md:text-sm font-mono text-slate-300">
-                              <div className="bg-slate-950 p-2 rounded text-center border border-slate-800/60">
-                                <span className="block text-[10px] text-slate-505 uppercase font-semibold">Monitorados</span>
-                                <b className="text-slate-200 text-sm">{st.jovens} Jovens</b>
+                            <div className="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-slate-800 text-xs font-mono text-slate-300">
+                              <div className="bg-slate-950 p-1.5 rounded text-center border border-slate-800/60">
+                                <span className="block text-[8px] text-slate-400 uppercase font-semibold">Monitorados</span>
+                                <b className="text-slate-200 text-xs">{st.jovens} Jovens</b>
                               </div>
-                              <div className="bg-slate-950 p-2 rounded text-center border border-slate-800/60">
-                                <span className="block text-[10px] text-slate-505 uppercase font-semibold">Score Médio</span>
-                                <b className="text-emerald-400 text-sm">{st.avg_score_empregabilidade || 50}</b>
+                              <div className="bg-slate-950 p-1.5 rounded text-center border border-slate-800/60">
+                                <span className="block text-[8px] text-slate-400 uppercase font-semibold">Score Médio</span>
+                                <b className="text-emerald-400 text-xs">{st.avg_score_empregabilidade || 50}</b>
                               </div>
                             </div>
                           </div>
                         );
                       })
                     ) : (
-                      <p className="text-sm text-slate-400 text-center py-10 col-span-3 italic">Nenhum dado consolidado de Pirapora.</p>
+                      <p className="text-xs text-slate-400 text-center py-6 col-span-3 italic">Nenhum dado consolidado de Pirapora.</p>
                     )}
                   </div>
                 </div>
@@ -297,26 +297,26 @@ export default function CoordinatorDashboard({
 
               {/* DETAILED HIGH FIDELITY TABLE */}
               {activeTab === 'coord_mesa' && (
-                <div id="tabela-trajetoria-card" className="lg:col-span-12 bg-slate-950 p-6 md:p-8 rounded-xl border border-slate-800 shadow-xl">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div id="tabela-trajetoria-card" className="lg:col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
                     <div>
-                      <h3 className="font-bold text-slate-200 text-base md:text-lg uppercase tracking-wide mb-1.5 font-mono flex items-center gap-2">
-                        <Users className="w-5 h-5 text-emerald-500" />
+                      <h3 className="font-bold text-slate-200 text-sm md:text-base uppercase tracking-wide mb-1 font-mono flex items-center gap-1.5">
+                        <Users className="w-4.5 h-4.5 text-emerald-500" />
                         Acompanhamento da Trajetória Detalhado
                       </h3>
-                      <p className="text-sm text-slate-400">Classificação de risco em tempo real e evolução de cada jovem</p>
+                      <p className="text-xs text-slate-400">Classificação de risco em tempo real e evolução de cada jovem</p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
                       <div className="relative">
-                        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                        <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
                         <input 
                           id="input-pesquisar-jovens"
                           type="text" 
                           placeholder="Buscar por nome..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-9 pr-3 py-1.5 text-xs md:text-sm bg-slate-900 border border-slate-800 rounded-md text-white focus:outline-none focus:border-emerald-500 w-36 md:w-48"
+                          className="pl-8 pr-2.5 py-1 text-xs bg-slate-900 border border-slate-800 rounded-md text-white focus:outline-none focus:border-emerald-500 w-32 md:w-40"
                         />
                       </div>
 
@@ -324,7 +324,7 @@ export default function CoordinatorDashboard({
                         id="select-filtro-bairro"
                         value={filterBairro}
                         onChange={(e) => setFilterBairro(e.target.value)}
-                        className="p-1.5 px-2.5 bg-slate-900 border border-slate-800 rounded-md text-slate-305 text-xs md:text-sm focus:outline-none font-mono">
+                        className="p-1 px-2 bg-slate-900 border border-slate-800 rounded-md text-slate-300 text-xs focus:outline-none font-mono">
                         <option value="Todos">Todos Bairros</option>
                         <option value="Santo Antônio">Santo Antônio</option>
                         <option value="Planalto">Planalto</option>
@@ -341,7 +341,7 @@ export default function CoordinatorDashboard({
                         id="select-filtro-risco"
                         value={filterRisco}
                         onChange={(e) => setFilterRisco(e.target.value)}
-                        className="p-1.5 px-2.5 bg-slate-900 border border-slate-800 rounded-md text-slate-305 text-xs md:text-sm focus:outline-none font-mono">
+                        className="p-1 px-2 bg-slate-900 border border-slate-800 rounded-md text-slate-300 text-xs focus:outline-none font-mono">
                         <option value="Todos">Todos Riscos</option>
                         <option value="alto">Alto Risco</option>
                         <option value="medio">Risco Médio</option>
@@ -355,25 +355,25 @@ export default function CoordinatorDashboard({
                           setEncaminharJovemId('');
                           setIsEncaminharModalOpen(true);
                         }}
-                        className="p-1.5 px-2.5 bg-rose-950/40 border border-rose-900/60 hover:border-rose-500 rounded text-rose-350 hover:text-white hover:bg-rose-900/80 transition-all text-xs md:text-sm font-mono font-bold cursor-pointer flex items-center gap-1.5"
+                        className="p-1 px-2 bg-rose-950/40 border border-rose-900/60 hover:border-rose-500 rounded text-rose-300 hover:text-white hover:bg-rose-900/80 transition-all text-xs font-mono font-bold cursor-pointer flex items-center gap-1"
                       >
-                        <ShieldAlert className="w-3.5 h-3.5 text-rose-400" />
-                        Novo Encaminhamento CRAS
+                        <ShieldAlert className="w-3 h-3 text-rose-400" />
+                        Novo Encaminhamento
                       </button>
                     </div>
                   </div>
 
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-slate-300">
-                      <thead className="bg-slate-900 text-xs text-slate-400 uppercase font-mono border-b border-slate-800">
+                    <table className="w-full text-left text-xs text-slate-305 text-slate-300">
+                      <thead className="bg-slate-900 text-[11px] text-slate-400 uppercase font-mono border-b border-slate-800">
                         <tr>
-                          <th className="py-4 px-4">Jovem</th>
-                          <th className="py-4 px-4">Região</th>
-                          <th className="py-4 px-4 text-center">Frequência</th>
-                          <th className="py-4 px-4">Situação Social</th>
-                          <th className="py-4 px-4 text-center">Risco</th>
-                          <th className="py-4 px-4">Status Programa</th>
-                          <th className="py-4 px-4 text-right">Ação</th>
+                          <th className="py-2 px-3">Jovem</th>
+                          <th className="py-2 px-3">Região</th>
+                          <th className="py-2 px-3 text-center">Frequência</th>
+                          <th className="py-2 px-3">Situação Social</th>
+                          <th className="py-2 px-3 text-center">Risco</th>
+                          <th className="py-2 px-3">Status Programa</th>
+                          <th className="py-2 px-3 text-right">Ação</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800">
@@ -387,7 +387,7 @@ export default function CoordinatorDashboard({
                               riskBadgeColor = 'bg-red-950 text-red-400 border-red-900';
                               riskBallColor = 'bg-red-600 animate-pulse';
                             } else if (riskCalc.classificacao === 'medio') {
-                              riskBadgeColor = 'bg-amber-950 text-amber-400 border-amber-900';
+                              riskBadgeColor = 'bg-amber-950 text-amber-300 border-amber-900';
                               riskBallColor = 'bg-amber-500';
                             }
 
@@ -398,9 +398,9 @@ export default function CoordinatorDashboard({
 
                             return (
                               <tr key={j.id} className="hover:bg-slate-900/60 transition duration-150">
-                                <td className="py-5 px-4 font-medium">
-                                  <div className="text-white text-sm md:text-base font-semibold">{j.nome}</div>
-                                  <div className="text-xs text-slate-400 font-mono mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                                <td className="py-2.5 px-3 font-medium">
+                                  <div className="text-white text-xs md:text-sm font-semibold">{j.nome}</div>
+                                  <div className="text-[10px] text-slate-400 font-mono mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
                                     <span>Idade: {j.idade ?? 16} • Renda: R$ {j.renda_familiar ?? 1000}</span>
                                     <span className="text-slate-700">|</span>
                                     <a 
@@ -408,38 +408,38 @@ export default function CoordinatorDashboard({
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       title={`Conversar com ${j.nome} no WhatsApp (+55 ${j.telefone || '38999812345'})`}
-                                      className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-350 transition-colors font-bold"
+                                      className="inline-flex items-center gap-0.5 text-emerald-400 hover:text-emerald-350 transition-colors font-bold"
                                     >
-                                      <MessageSquare className="w-3.5 h-3.5" />
-                                      Conversar com Aluno
+                                      <MessageSquare className="w-3 h-3" />
+                                      Conversar
                                     </a>
                                   </div>
                                 </td>
-                                <td className="py-5 px-4 font-mono text-xs md:text-sm text-slate-300">
+                                <td className="py-2.5 px-3 font-mono text-xs text-slate-300">
                                   {j.bairro}
-                                  <div className="text-[11px] text-slate-500 mt-0.5">{j.cidade}</div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5">{j.cidade}</div>
                                 </td>
-                                <td className="py-5 px-4 text-center font-bold text-sm">
+                                <td className="py-2.5 px-3 text-center font-bold text-xs">
                                   <span className={j.frequencia < 75 ? 'text-red-500' : j.frequencia < 85 ? 'text-amber-500' : 'text-emerald-400'}>
                                     {j.frequencia}%
                                   </span>
-                                  <div className="text-[11px] font-normal text-slate-500 mt-0.5">{j.faltas_consecutivas} faltas</div>
+                                  <div className="text-[10px] font-normal text-slate-500 mt-0.5">{j.faltas_consecutivas} faltas</div>
                                 </td>
-                                <td className="py-5 px-4 italic truncate max-w-[150px] text-slate-300 text-xs md:text-sm">
+                                <td className="py-2.5 px-3 italic truncate max-w-[130px] text-slate-300 text-xs">
                                   {j.vulnerabilidade_tipo}
                                 </td>
-                                <td className="py-5 px-4 text-center">
-                                  <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase border ${riskBadgeColor}`}>
-                                    <span className={`w-2 h-2 rounded-full ${riskBallColor}`} />
+                                <td className="py-2.5 px-3 text-center">
+                                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border ${riskBadgeColor}`}>
+                                    <span className={`w-1.5 h-1.5 rounded-full ${riskBallColor}`} />
                                     {riskCalc.classificacao}
                                   </span>
                                 </td>
-                                <td className="py-5 px-4 font-mono text-xs">
-                                  <span className={`px-2.5 py-1 rounded-md ${statusColor} font-bold`}>
+                                <td className="py-2.5 px-3 font-mono text-[10px]">
+                                  <span className={`px-2 py-0.5 rounded ${statusColor} font-bold`}>
                                     {j.status}
                                   </span>
                                 </td>
-                                <td className="py-5 px-4 text-right">
+                                <td className="py-2.5 px-3 text-right">
                                   <div className="flex justify-end items-center gap-2">
                                     <button 
                                       id={`view-trajectory-${j.id}`}
@@ -447,7 +447,7 @@ export default function CoordinatorDashboard({
                                         setInfoJovemModal(j);
                                         showToast(`Abrindo informações detalhadas de ${j.nome}`);
                                       }}
-                                      className="p-1.5 px-3 border border-slate-700 hover:border-emerald-500 rounded bg-slate-900 text-xs hover:text-emerald-400 transition font-mono whitespace-nowrap cursor-pointer">
+                                      className="p-1 px-2 border border-slate-700 hover:border-emerald-500 rounded bg-slate-900 text-[10px] hover:text-emerald-400 transition font-mono whitespace-nowrap cursor-pointer">
                                       Mais Informações
                                     </button>
                                   </div>
@@ -457,7 +457,7 @@ export default function CoordinatorDashboard({
                           })
                         ) : (
                           <tr>
-                            <td colSpan={7} className="p-8 text-center text-slate-500">Nenhum jovem corresponde aos filtros em Pirapora.</td>
+                            <td colSpan={7} className="p-6 text-center text-slate-500">Nenhum jovem corresponde aos filtros em Pirapora.</td>
                           </tr>
                         )}
                       </tbody>
