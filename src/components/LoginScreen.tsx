@@ -65,11 +65,14 @@ export default function LoginScreen({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username.trim()) {
+    const enteredUser = username.trim().toLowerCase();
+    const enteredPass = password;
+
+    if (!enteredUser) {
       setFormError('Por favor, informe seu usuário ou e-mail de acesso.');
       return;
     }
-    if (!password) {
+    if (!enteredPass) {
       setFormError('Informe a sua senha para continuar.');
       return;
     }
@@ -77,24 +80,80 @@ export default function LoginScreen({
     setFormError(null);
     setLoginSuccess(true);
 
-    // Simulate small backend check then login based on credentials input
+    // Validate credentials in absolute strict mode
     setTimeout(() => {
-      const enteredValue = username.trim().toLowerCase();
+      let targetRole: 'coordenador' | 'jovem' | 'empresa' | 'assistente_social' | null = null;
+      let matchedJovemId: string | null = null;
 
-      let targetRole: 'coordenador' | 'jovem' | 'empresa' | 'assistente_social' = 'coordenador';
+      // 1. Check Coordenador
+      if (enteredUser === 'coordenador@descubra.com') {
+        if (enteredPass === 'coordenador123') {
+          targetRole = 'coordenador';
+        } else {
+          setFormError('Senha incorreta para o Portal do Coordenador.');
+          setLoginSuccess(false);
+          return;
+        }
+      }
+      // 2. Check Assistente Social
+      else if (enteredUser === 'anapaula.cras@pirapora.mg.gov.br') {
+        if (enteredPass === 'assistente123') {
+          targetRole = 'assistente_social';
+        } else {
+          setFormError('Senha incorreta para o Portal do Assistente Social.');
+          setLoginSuccess(false);
+          return;
+        }
+      }
+      // 3. Check Empresa
+      else if (enteredUser === 'rh@minasligas.com.br') {
+        if (enteredPass === 'empresa123') {
+          targetRole = 'empresa';
+        } else {
+          setFormError('Senha incorreta para o Portal da Empresa Parceira.');
+          setLoginSuccess(false);
+          return;
+        }
+      }
+      // 4. Check Jovem Accounts
+      else {
+        // Find if this email matches any youth
+        const foundYouth = jovens.find(j => {
+          const email = j.nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '') + '@descubra.com';
+          return email === enteredUser;
+        });
 
-      if (enteredValue.includes('social') || enteredValue.includes('ana.paula') || enteredValue.includes('cras') || enteredValue.includes('assistente')) {
-        targetRole = 'assistente_social';
-      } else if (enteredValue.includes('empresa') || enteredValue.includes('minas') || enteredValue.includes('rh') || enteredValue.includes('ligas')) {
-        targetRole = 'empresa';
-      } else if (enteredValue.includes('jovem') || enteredValue.includes('joao') || enteredValue.includes('maria') || enteredValue.includes('lucas') || enteredValue.includes('estudante') || enteredValue.includes('descubra.com')) {
-        targetRole = 'jovem';
-      } else {
-        // Fallback or use activeShortcut if applicable, otherwise default coordinator
-        targetRole = activeShortcut || 'coordenador';
+        if (foundYouth) {
+          if (enteredPass === 'jovem123') {
+            targetRole = 'jovem';
+            matchedJovemId = foundYouth.id;
+          } else {
+            setFormError('Senha incorreta para o Portal do Jovem.');
+            setLoginSuccess(false);
+            return;
+          }
+        } else if (enteredUser === 'jovem@descubra.com') {
+          if (enteredPass === 'jovem123') {
+            targetRole = 'jovem';
+            matchedJovemId = selectedJovemId || (jovens[0] ? jovens[0].id : null);
+          } else {
+            setFormError('Senha incorreta para o Portal do Jovem.');
+            setLoginSuccess(false);
+            return;
+          }
+        }
       }
 
-      handleLoginAs(targetRole);
+      // If we matched a valid portal role
+      if (targetRole) {
+        if (targetRole === 'jovem' && matchedJovemId) {
+          setSelectedJovemId(matchedJovemId);
+        }
+        handleLoginAs(targetRole);
+      } else {
+        setFormError('Usuário ou e-mail de acesso não cadastrado no sistema.');
+        setLoginSuccess(false);
+      }
     }, 600);
   };
 
