@@ -86,6 +86,7 @@ export default function App() {
   // New Case Report State (Assistente Social)
   const [newAtendimento, setNewAtendimento] = useState({
     jovem_id: '',
+    alerta_id: '',
     tema: 'Acompanhamento de Rotina',
     relatorio: '',
     encaminhamentos: ''
@@ -340,21 +341,31 @@ export default function App() {
     }
     try {
       const payload = {
-        ...newAtendimento,
+        jovem_id: newAtendimento.jovem_id,
+        tema: newAtendimento.tema,
+        relatorio: newAtendimento.relatorio,
+        encaminhamentos: newAtendimento.encaminhamentos,
         assistente_id: currentUser.id,
         assistente_name: currentUser.nome,
         data: new Date().toISOString().split('T')[0]
       };
       await apiService.salvarAtendimento(payload);
+
+      // Auto-resolve linked alert if present
+      if (newAtendimento.alerta_id) {
+        await apiService.resolverAlerta(newAtendimento.alerta_id, 'resolvido', newAtendimento.relatorio);
+      }
+
       showToast('Atendimento social registrado e adicionado à linha do tempo!');
       setNewAtendimento({
         jovem_id: jovens[0]?.id || '',
+        alerta_id: '',
         tema: 'Acompanhamento de Rotina',
         relatorio: '',
         encaminhamentos: ''
       });
       await loadAllData();
-      setActiveTab('social_fila');
+      setActiveTab('social_historico');
     } catch (e) {
       showToast('Falha ao registrar.');
     }
@@ -599,6 +610,7 @@ export default function App() {
           {currentUser.tipo === 'assistente_social' && (
             <SocialAssistantDashboard 
               activeTab={activeTab}
+              setActiveTab={setActiveTab}
               alertas={alertas}
               jovens={jovens}
               currentUser={currentUser}
@@ -607,6 +619,7 @@ export default function App() {
               handleResolverAlerta={handleResolverAlerta}
               handleRegistrarAtendimento={handleRegistrarAtendimento}
               showToast={showToast}
+              atendimentos={atendimentos}
             />
           )}
 

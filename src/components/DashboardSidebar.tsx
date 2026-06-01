@@ -260,6 +260,16 @@ export default function DashboardSidebar({
               <FileText className="w-3.5 h-3.5 text-emerald-400" />
               <span>Registrar Atend.</span>
             </button>
+
+            <button 
+              id="nav-sub-social-history"
+              onClick={() => {
+                setActiveTab('social_historico');
+              }}
+              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'social_historico' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+              <Clock className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Histórico de Registros</span>
+            </button>
           </div>
         )}
       </nav>

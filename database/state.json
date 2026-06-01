@@ -1982,6 +1982,17 @@
   ],
   "alertas": [
     {
+      "jovem_id": "jovem-48",
+      "jovem_nome": "Caio Felipe de Paula",
+      "jovem_bairro": "Vila Rica",
+      "tipo": "Solicitação de Apoio",
+      "gravidade": "medio",
+      "status": "resolvido",
+      "descricao": "[REQ: OUTRO] m ajuda [Ação Corretiva: vou ajudar]",
+      "data_criado": "2026-06-01",
+      "id": "alerta-1780356706848"
+    },
+    {
       "id": "alerta-1",
       "jovem_id": "jovem-1",
       "jovem_nome": "João Victor Mendes",
@@ -2074,6 +2085,17 @@
     }
   ],
   "atendimentos": [
+    {
+      "jovem_id": "jovem-48",
+      "tema": "Visita Emergencial - Solicitação de Apoio",
+      "relatorio": "Efetuado acolhimento emergencial na residência do bairro Vila Rica.",
+      "encaminhamentos": "Registrar vale-transporte solidário ou encaminhar auxílio.",
+      "assistente_id": "user-social",
+      "assistente_name": "Ana Paula Silva",
+      "data": "2026-06-01",
+      "id": "aten-1780356766100",
+      "jovem_nome": "Caio Felipe de Paula"
+    },
     {
       "id": "aten-1",
       "jovem_id": "jovem-4",
