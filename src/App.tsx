@@ -167,6 +167,11 @@ export default function App() {
     loadAllData();
   }, [currentUser]);
 
+  // Reseta o scroll para o topo ao trocar de sistema, fazer login ou mudar de aba
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [isLoggedIn, activeTab, currentUser.tipo]);
+
   // Handle role switching mapping
   const handleRoleSwitch = (role: string) => {
     if (role === 'coordenador') {

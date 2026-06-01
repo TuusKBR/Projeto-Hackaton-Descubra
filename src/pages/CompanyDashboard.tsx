@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Compass } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, Compass, X, Award, Sparkles, Check, Users, Search, MessageSquare } from 'lucide-react';
 import { Vaga, Jovem } from '../types';
 
 interface CompanyDashboardProps {
@@ -28,6 +28,8 @@ export default function CompanyDashboard({
   setNewVaga,
   handleCriarVaga
 }: CompanyDashboardProps) {
+  
+  const [selectedVacancyForMatch, setSelectedVacancyForMatch] = useState<Vaga | null>(null);
   
   // Calculate coordinates distance helper for frontend matches rendering
   const getProximityBonus = (b1: string, b2: string) => {
@@ -224,46 +226,24 @@ export default function CompanyDashboard({
                             </div>
 
                             {/* MATCH SUGGESTIONS LIST PANEL */}
-                            <div className="space-y-4 mt-4">
-                              <span className="block text-xs text-slate-400 font-black uppercase font-mono tracking-wider">Aptidões e Proximidades Calculadas:</span>
-                              
-                              {jovens.filter(j => j.status !== 'aprendiz_contratado').map((j) => {
-                                const distBonus = getProximityBonus(j.bairro, v.bairro);
-                                
-                                let pct = 60;
-                                if (j.bairro === v.bairro) pct += 25;
-                                if (j.score_empregabilidade > 65) pct += 10;
-                                if (j.frequencia > 80) pct += 5;
-
-                                return (
-                                  <div key={j.id} className="bg-slate-950 p-4 md:p-5 rounded-lg border border-slate-850/80 flex flex-col transition hover:border-emerald-600/40">
-                                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2.5 flex-wrap">
-                                          <span className="font-extrabold text-white text-base md:text-lg">{j.nome}</span>
-                                          <span className={`text-[10px] md:text-xs px-2.5 py-1 rounded-md font-mono font-bold tracking-wider ${distBonus.bg}`}>
-                                            {distBonus.text}
-                                          </span>
-                                          <span className="text-[11px] bg-slate-900 border border-slate-800 px-2.5 py-0.5 rounded-full font-mono text-slate-400">
-                                            {j.idade} anos | {j.genero}
-                                          </span>
-                                        </div>
-                                        <p className="text-sm text-slate-405 font-mono mt-2 leading-relaxed">
-                                          Bairro Residência: <b className="text-slate-300 font-bold">{j.bairro}</b> | Frequência Escolar: <b className="text-slate-300 font-bold">{j.frequencia}%</b> | Score Ativo: <b className="text-emerald-450 font-mono font-black">{j.score_empregabilidade} pts</b>
-                                        </p>
-                                      </div>
-
-                                      {/* MATCH EMBLEM SCORE */}
-                                      <div className="text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-3 shrink-0 border-t sm:border-0 border-slate-900 pt-3 sm:pt-0">
-                                        <div className="text-left sm:text-right">
-                                          <span className="block text-emerald-400 font-mono font-black text-base md:text-lg">{pct}% Match</span>
-                                          <span className="text-[10px] text-slate-500 font-mono italic">Prioridade Algorítmica</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                            <div className="space-y-4 mt-4 bg-slate-950/40 p-4 border border-slate-900 rounded-lg">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="space-y-0.5">
+                                  <span className="block text-xs text-slate-400 font-black uppercase font-mono tracking-wider">Aptidões e Proximidades Computadas:</span>
+                                  <p className="text-xs text-slate-500 font-sans">
+                                    Encontramos {jovens.filter(j => j.status !== 'aprendiz_contratado').length} jovens aptos no cadastro ativo municipal de Pirapora.
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  id={`btn-ver-recomendacoes-${v.id}`}
+                                  onClick={() => setSelectedVacancyForMatch(v)}
+                                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 font-mono font-black text-xs uppercase text-white rounded-lg transition-all shadow-md hover:shadow-emerald-950/20 flex items-center justify-center gap-2 cursor-pointer self-start sm:self-center"
+                                >
+                                  <Sparkles className="w-4 h-4 animate-pulse text-amber-300" />
+                                  Ver Recomendações
+                                </button>
+                              </div>
                             </div>
                           </div>
                         );
@@ -278,6 +258,214 @@ export default function CompanyDashboard({
 
         </div>
       )}
+
+      {/* POPUP MODAL: RECOMENDAÇÕES DA VAGA (TOP 3 RANK + 5 SUPOSTOSEOUTROS) */}
+      {selectedVacancyForMatch && (() => {
+        const v = selectedVacancyForMatch;
+        const candidates = jovens
+          .filter(j => j.status !== 'aprendiz_contratado')
+          .map(j => {
+            const distBonus = getProximityBonus(j.bairro, v.bairro);
+            let pct = 60;
+            if (j.bairro === v.bairro) pct += 25;
+            if (j.score_empregabilidade > 65) pct += 10;
+            if (j.frequencia > 80) pct += 5;
+            return { ...j, pct, distBonus };
+          })
+          .sort((a, b) => {
+            if (b.pct !== a.pct) return b.pct - a.pct;
+            return b.score_empregabilidade - a.score_empregabilidade;
+          });
+
+        const top3 = candidates.slice(0, 3);
+        const supplemental5 = candidates.slice(3, 8);
+
+        return (
+          <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+            <div 
+              className="bg-slate-950 border border-slate-800 w-full max-w-4xl rounded-2xl shadow-2xl p-6 md:p-8 relative overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
+              id="pop-up-recomendacoes-vaga"
+            >
+              {/* Close button */}
+              <button 
+                id="btn-close-recomendacoes-modal"
+                type="button"
+                onClick={() => setSelectedVacancyForMatch(null)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white hover:bg-slate-900 p-2 rounded-lg transition-all cursor-pointer z-10"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Title Section */}
+              <div className="border-b border-slate-900 pb-5 mb-6">
+                <span className="text-[10px] md:text-xs font-black uppercase text-emerald-400 font-mono tracking-widest bg-emerald-950/50 px-3 py-1 rounded border border-emerald-900/30">
+                  {v.empresa_nome}
+                </span>
+                <h3 className="font-bold text-white text-xl md:text-2xl mt-3 uppercase tracking-wide font-mono">
+                  Recomendações para a Vaga: {v.titulo}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1.5 font-sans leading-relaxed">
+                  Polo de Atribuição: <strong className="text-slate-300">{v.bairro}</strong> • Critérios Inteligentes: Proximidade geográfica (menor custo de transporte), Score de Empregabilidade e Frequência das Microtarefas.
+                </p>
+              </div>
+
+              {candidates.length === 0 ? (
+                <div className="text-center py-10 bg-slate-900/30 rounded-xl border border-slate-800/80 text-slate-500 font-mono text-sm leading-relaxed">
+                  Nenhum jovem qualificado ou cadastrado no momento para esta vaga.
+                </div>
+              ) : (
+                <div className="space-y-8">
+                  {/* SECTION 1: TOP 3 RANKING */}
+                  <div>
+                    <h4 className="text-xs font-black text-amber-400 uppercase tracking-widest font-mono mb-4 flex items-center gap-2 border-l-2 border-amber-500 pl-2">
+                      <Award className="w-4 h-4 text-amber-400" />
+                      Top 3 Jovens Recomendados (Rank de Compatibilidade)
+                    </h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {top3.map((j, idx) => {
+                        // Medals customization
+                        let medalBg = 'border-amber-500/30 bg-amber-950/10 hover:border-amber-500/50';
+                        let medalTitle = '🏆 1º Lugar';
+                        let medalText = 'text-amber-400';
+                        
+                        if (idx === 1) {
+                          medalBg = 'border-slate-500/30 bg-slate-900/40 hover:border-slate-400/50';
+                          medalTitle = '🥈 2º Lugar';
+                          medalText = 'text-slate-300';
+                        } else if (idx === 2) {
+                          medalBg = 'border-orange-500/30 bg-orange-950/10 hover:border-orange-500/50';
+                          medalTitle = '🥉 3º Lugar';
+                          medalText = 'text-orange-400';
+                        }
+
+                        return (
+                          <div 
+                            key={j.id} 
+                            className={`p-5 rounded-xl border flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${medalBg}`}
+                          >
+                            <div className="absolute top-0 right-0 p-3 bg-slate-900/40 border-l border-b border-inherit rounded-bl-xl font-mono font-black text-xs text-white">
+                              {j.pct}% Match
+                            </div>
+
+                            <div className="space-y-3.5">
+                              <span className={`block text-[10px] font-black font-mono tracking-widest uppercase ${medalText}`}>
+                                {medalTitle}
+                              </span>
+                              
+                              <div>
+                                <h5 className="font-extrabold text-white text-base md:text-lg tracking-tight leading-tight group-hover:text-amber-300">{j.nome}</h5>
+                                <span className="text-[10px] text-slate-505 font-mono">
+                                  {j.idade} anos • {j.genero}
+                                </span>
+                              </div>
+
+                              <div className="space-y-1.5 text-xs font-mono text-slate-350 bg-slate-950/70 p-3 rounded-lg border border-slate-900">
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500 leading-tight">Bairro:</span>
+                                  <span className="text-white font-bold max-w-[100px] truncate leading-tight" title={j.bairro}>{j.bairro}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500 leading-tight">Proximidade:</span>
+                                  <span className="text-emerald-450 font-semibold leading-tight">{j.distBonus.text}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500 leading-tight">Frequência:</span>
+                                  <span className="text-slate-300 leading-tight">{j.frequencia}%</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-slate-500 leading-tight">Score Ativo:</span>
+                                  <span className="text-emerald-400 font-bold leading-tight">{j.score_empregabilidade} pts</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-slate-900">
+                              <a 
+                                href={`https://wa.me/55${j.telefone || '38999812345'}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full py-2 px-3 bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 hover:text-emerald-400 text-xs text-slate-300 rounded font-mono font-bold transition flex items-center justify-center gap-2 cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                Contatar Candidato
+                              </a>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* SECTION 2: SUPPLEMENTAL 5 RECOMENDADOS */}
+                  {supplemental5.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest font-mono mb-4 flex items-center gap-2 border-l-2 border-emerald-500 pl-2">
+                        <Users className="w-4 h-4 text-emerald-400" />
+                        Próximas 5 Alternativas de Impacto Recomendadas
+                      </h4>
+
+                      <div className="space-y-2.5">
+                        {supplemental5.map((j) => {
+                          return (
+                            <div 
+                              key={j.id} 
+                              className="bg-slate-900/30 hover:bg-slate-900/60 p-4 border border-slate-850 rounded-xl transition duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono"
+                            >
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2.5 flex-wrap">
+                                  <span className="font-extrabold text-white text-sm md:text-base leading-tight">{j.nome}</span>
+                                  <span className={`text-[9px] md:text-[10px] px-2 py-0.5 rounded font-mono font-black ${j.distBonus.bg}`}>
+                                    {j.distBonus.text}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500">
+                                    {j.idade} anos | {j.genero}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-slate-405 mt-1.5">
+                                  Residência: <strong className="text-slate-300">{j.bairro}</strong> • Frequência: <strong className="text-slate-300">{j.frequencia}%</strong> • Score: <strong className="text-emerald-450">{j.score_empregabilidade} pts</strong>
+                                </p>
+                              </div>
+
+                              <div className="flex items-center gap-4 border-t sm:border-0 border-slate-900 pt-2 sm:pt-0 justify-between sm:justify-start">
+                                <div className="text-left sm:text-right">
+                                  <span className="block text-emerald-450 font-black text-sm">{j.pct}% Match</span>
+                                  <span className="text-[8px] text-slate-500 uppercase tracking-wider block">Compatibilidade</span>
+                                </div>
+                                <a 
+                                  href={`https://wa.me/55${j.telefone || '38999812345'}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="py-2 px-3 bg-slate-950 hover:bg-slate-900 border border-slate-850 hover:border-emerald-500/50 hover:text-emerald-400 text-[11px] text-slate-400 rounded transition flex items-center gap-1.5 cursor-pointer font-bold"
+                                >
+                                  <MessageSquare className="w-3 h-3" />
+                                  Chamar
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Modal footer back to context action */}
+              <div className="mt-8 pt-4 border-t border-slate-900 flex justify-end">
+                <button
+                  type="button"
+                  id="btn-close-modal-bottom"
+                  onClick={() => setSelectedVacancyForMatch(null)}
+                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-mono font-bold text-white rounded-lg transition-colors cursor-pointer"
+                >
+                  Fechar Recomendações
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
     </div>
   );
