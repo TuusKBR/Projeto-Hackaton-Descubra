@@ -139,34 +139,88 @@ export default function SocialAssistantDashboard({
             )}
 
             {/* REGISTER ATENDIMENTO SOCIAL PANEL */}
-            {activeTab === 'social_registrar' && (
-              <div id="registrar-atendimento-card" className="col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl shadow-slate-950/50">
-                <div className="flex items-center gap-2.5 mb-3.5 border-b border-slate-900 pb-2.5">
-                  <FileText className="w-6 h-6 text-emerald-400" />
-                  <div>
-                    <h3 className="font-bold text-white text-sm md:text-base uppercase tracking-wide font-mono">
-                      Registrar Atendimento do CRAS (Evolução Social)
-                    </h3>
-                    <p className="text-[11px] text-slate-404 mt-0.5">
-                      Ligue visitas comunitárias e evoluções diretamente no histórico assistencial do jovem.
-                    </p>
-                  </div>
-                </div>
+            {activeTab === 'social_registrar' && (() => {
+              const linkedAlerta = newAtendimento.alerta_id
+                ? alertas.find(a => a.id === newAtendimento.alerta_id)
+                : alertas.find(a => a.jovem_id === newAtendimento.jovem_id && a.status !== 'resolvido');
 
-                <form onSubmit={handleRegistrarAtendimento} className="space-y-4 w-full text-xs">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 font-sans">
+              return (
+                <div id="registrar-atendimento-card" className="col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl shadow-slate-950/50">
+                  <div className="flex items-center gap-2.5 mb-3.5 border-b border-slate-900 pb-2.5">
+                    <FileText className="w-6 h-6 text-emerald-400" />
                     <div>
-                      <label className="block text-[11px] text-slate-350 font-bold mb-1 uppercase tracking-wide font-mono text-emerald-455">Selecionar Jovem Referenciado</label>
-                      <select 
-                        id="select-atendimento-jovem"
-                        value={newAtendimento.jovem_id}
-                        onChange={(e) => setNewAtendimento({...newAtendimento, jovem_id: e.target.value})}
-                        className="w-full bg-slate-900 border border-slate-850 p-2 text-white rounded font-mono focus:border-emerald-500 focus:outline-none font-medium shadow-inner">
-                        {jovens.map(j => (
-                          <option key={j.id} value={j.id}>{j.nome} ({j.bairro})</option>
-                        ))}
-                      </select>
+                      <h3 className="font-bold text-white text-sm md:text-base uppercase tracking-wide font-mono">
+                        Registrar Atendimento do CRAS (Evolução Social)
+                      </h3>
+                      <p className="text-[11px] text-slate-404 mt-0.5">
+                        Ligue visitas comunitárias e evoluções diretamente no histórico assistencial do jovem.
+                      </p>
                     </div>
+                  </div>
+
+                  {linkedAlerta && (
+                    <div className="bg-slate-900 border border-amber-900/40 rounded-lg p-3.5 mb-4 shadow-md font-sans">
+                      <div className="flex items-center gap-2 text-amber-500 font-bold mb-2">
+                        <ShieldAlert className="w-4.5 h-4.5 text-amber-500 shrink-0" />
+                        <span className="text-xs uppercase tracking-wide font-mono">Motivo do Encaminhamento para o CRAS</span>
+                      </div>
+                      <div className="bg-slate-950 p-3 rounded border border-slate-850 space-y-2 text-xs">
+                        <p className="text-slate-300 leading-relaxed">
+                          <strong className="text-amber-500/95 uppercase font-mono tracking-wider font-bold text-[10px] block mb-0.5">Tipo de Alerta:</strong>
+                          {linkedAlerta.tipo}
+                        </p>
+                        <p className="text-slate-300 leading-relaxed">
+                          <strong className="text-amber-500/95 uppercase font-mono tracking-wider font-bold text-[10px] block mb-0.5">Gatilho de Risco Predito / Descrição:</strong>
+                          "{linkedAlerta.descricao}"
+                        </p>
+                        <div className="flex items-center justify-between flex-wrap gap-2 pt-1 border-t border-slate-900 text-[10px] text-slate-500 font-mono">
+                          <span>Notificado em: <b className="text-slate-400">{linkedAlerta.data_criado}</b></span>
+                          <span>Gravidade do Alerta: <b className="text-amber-500 uppercase">{linkedAlerta.gravidade}</b></span>
+                        </div>
+                      </div>
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const defaultParafer = `Foco em acolhimento e escuta ativa decorrente do encaminhamento referente ao alerta de [${linkedAlerta.tipo}]. Observou-se a seguinte ocorrência: "${linkedAlerta.descricao}". Jovem e família orientados sobre a importância do engajamento no programa.`;
+                            setNewAtendimento({
+                              ...newAtendimento,
+                              relatorio: defaultParafer,
+                              tema: `Visita Emergencial - ${linkedAlerta.tipo}`
+                            });
+                            showToast("Relato pré-preenchido com base no motivo do alerta!");
+                          }}
+                          className="text-[10px] font-black font-mono px-3.5 py-1.5 bg-slate-950 hover:bg-slate-900 border border-amber-900/35 hover:border-amber-500 text-amber-400 hover:text-white rounded transition cursor-pointer uppercase tracking-wider font-bold"
+                        >
+                          Preencher Parecer com Dados do Alerta ✓
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleRegistrarAtendimento} className="space-y-4 w-full text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 font-sans">
+                      <div>
+                        <label className="block text-[11px] text-slate-350 font-bold mb-1 uppercase tracking-wide font-mono text-emerald-455">Selecionar Jovem Referenciado</label>
+                        <select 
+                          id="select-atendimento-jovem"
+                          value={newAtendimento.jovem_id}
+                          onChange={(e) => {
+                            const selectedJovemId = e.target.value;
+                            const matchingAlert = alertas.find(a => a.jovem_id === selectedJovemId && a.status !== 'resolvido');
+                            setNewAtendimento({
+                              ...newAtendimento,
+                              jovem_id: selectedJovemId,
+                              alerta_id: matchingAlert ? matchingAlert.id : '',
+                              tema: matchingAlert ? `Visita Emergencial - ${matchingAlert.tipo}` : 'Acompanhamento de Rotina'
+                            });
+                          }}
+                          className="w-full bg-slate-900 border border-slate-850 p-2 text-white rounded font-mono focus:border-emerald-500 focus:outline-none font-medium shadow-inner">
+                          {jovens.map(j => (
+                            <option key={j.id} value={j.id}>{j.nome} ({j.bairro})</option>
+                          ))}
+                        </select>
+                      </div>
 
                     <div>
                       <label className="block text-[11px] text-slate-350 font-bold mb-1 uppercase tracking-wide font-mono text-emerald-455">Tema / Categoria do Registro</label>
@@ -218,7 +272,8 @@ export default function SocialAssistantDashboard({
                   </button>
                 </form>
               </div>
-            )}
+              );
+            })()}
 
             {/* HISTÓRICO DE ATENDIMENTOS SOCIAL PANEL */}
             {activeTab === 'social_historico' && (

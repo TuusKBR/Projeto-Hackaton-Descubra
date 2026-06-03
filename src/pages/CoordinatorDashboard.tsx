@@ -400,19 +400,20 @@ export default function CoordinatorDashboard({
                               <tr key={j.id} className="hover:bg-slate-900/60 transition duration-150">
                                 <td className="py-2.5 px-3 font-medium">
                                   <div className="text-white text-xs md:text-sm font-semibold">{j.nome}</div>
-                                  <div className="text-[10px] text-slate-400 font-mono mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                                    <span>Idade: {j.idade ?? 16} • Renda: R$ {j.renda_familiar ?? 1000}</span>
-                                    <span className="text-slate-700">|</span>
-                                    <a 
-                                      href={`https://wa.me/55${j.telefone || '38999812345'}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      title={`Conversar com ${j.nome} no WhatsApp (+55 ${j.telefone || '38999812345'})`}
-                                      className="inline-flex items-center gap-0.5 text-emerald-400 hover:text-emerald-350 transition-colors font-bold"
-                                    >
-                                      <MessageSquare className="w-3 h-3" />
-                                      Conversar
-                                    </a>
+                                  <div className="text-[10px] text-slate-400 font-mono mt-1 space-y-1">
+                                    <div>Idade: {j.idade ?? 16} • Renda: R$ {j.renda_familiar ?? 1000}</div>
+                                    <div className="pt-0.5">
+                                      <a 
+                                        href={`https://wa.me/55${j.telefone || '38999812345'}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title={`Conversar com ${j.nome} no WhatsApp (+55 ${j.telefone || '38999812345'})`}
+                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-950/40 hover:bg-emerald-900/30 border border-emerald-900/40 hover:border-emerald-500 rounded text-[9px] uppercase tracking-wide font-black text-emerald-400 transition whitespace-nowrap shrink-0"
+                                      >
+                                        <MessageSquare className="w-2.5 h-2.5 shrink-0" />
+                                        <span>Conversar</span>
+                                      </a>
+                                    </div>
                                   </div>
                                 </td>
                                 <td className="py-2.5 px-3 font-mono text-xs text-slate-300">
