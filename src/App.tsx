@@ -282,6 +282,9 @@ export default function App() {
         faltas_consecutivas: 0,
         desempenho: 'bom' as const,
         vulnerabilidade_tipo: 'Nenhuma',
+        problemas_familiares: '',
+        problema_fisico_saude: '',
+        percepcao_familia_obs: '',
         renda_familiar: 1200,
         status: 'pré-aprendizagem' as const,
         possui_mei: false
