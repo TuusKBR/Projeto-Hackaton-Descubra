@@ -263,6 +263,39 @@
   ],
   "alertas": [
     {
+      "jovem_id": "jovem-1",
+      "jovem_nome": "João Victor Mendes",
+      "jovem_bairro": "Santo Antônio",
+      "tipo": "Evasão Escolar",
+      "gravidade": "medio",
+      "status": "resolvido",
+      "descricao": "ss [Ação Corretiva: xccxcxc]",
+      "data_criado": "2026-06-05",
+      "id": "alerta-1780701873176"
+    },
+    {
+      "jovem_id": "jovem-1",
+      "jovem_nome": "João Victor Mendes",
+      "jovem_bairro": "Santo Antônio",
+      "tipo": "Evasão Escolar",
+      "gravidade": "medio",
+      "status": "pendente",
+      "descricao": "vv",
+      "data_criado": "2026-06-05",
+      "id": "alerta-1780701325001"
+    },
+    {
+      "jovem_id": "jovem-2",
+      "jovem_nome": "Maria Eduarda Fernandes",
+      "jovem_bairro": "Planalto",
+      "tipo": "Evasão Escolar",
+      "gravidade": "medio",
+      "status": "pendente",
+      "descricao": "dxdd",
+      "data_criado": "2026-06-05",
+      "id": "alerta-1780701232070"
+    },
+    {
       "id": "alerta-1",
       "jovem_id": "jovem-1",
       "jovem_nome": "João Victor Mendes",
@@ -355,6 +388,17 @@
     }
   ],
   "atendimentos": [
+    {
+      "jovem_id": "jovem-1",
+      "tema": "Visita Emergencial - Evasão Escolar",
+      "relatorio": "xccxcxc",
+      "encaminhamentos": "xxx",
+      "assistente_id": "user-social",
+      "assistente_name": "Ana Paula Silva",
+      "data": "2026-06-05",
+      "id": "aten-1780701893743",
+      "jovem_nome": "João Victor Mendes"
+    },
     {
       "id": "aten-1",
       "jovem_id": "jovem-4",

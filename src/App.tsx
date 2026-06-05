@@ -16,16 +16,35 @@ import StudentModals from './components/StudentModals';
 
 export default function App() {
   // Roles: 'coordenador' | 'jovem' | 'empresa' | 'assistente_social'
-  const [currentUser, setCurrentUser] = useState({
-    id: 'user-coord',
-    nome: 'Carlos Mendes',
-    tipo: 'coordenador',
-    bairro: 'Centro',
-    cidade: 'Pirapora',
-    email: 'coordenador@descubra.com'
+  const [currentUser, setCurrentUser] = useState(() => {
+    const cached = localStorage.getItem('descubra_current_user');
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {}
+    }
+    return {
+      id: 'user-coord',
+      nome: 'Carlos Mendes',
+      tipo: 'coordenador',
+      bairro: 'Centro',
+      cidade: 'Pirapora',
+      email: 'coordenador@descubra.com'
+    };
   });
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    return localStorage.getItem('descubra_is_logged_in') === 'true';
+  });
+
+  // State synchronization with localStorage
+  useEffect(() => {
+    localStorage.setItem('descubra_current_user', JSON.stringify(currentUser));
+  }, [currentUser]);
+
+  useEffect(() => {
+    localStorage.setItem('descubra_is_logged_in', isLoggedIn ? 'true' : 'false');
+  }, [isLoggedIn]);
 
   // Helper to log in from portal buttons
   const handleLoginAs = (role: string) => {
@@ -45,7 +64,13 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterBairro, setFilterBairro] = useState('Todos');
   const [filterRisco, setFilterRisco] = useState('Todos');
-  const [activeTab, setActiveTab] = useState('coord_geral');
+  const [activeTab, setActiveTab] = useState(() => {
+    return localStorage.getItem('descubra_active_tab') || 'coord_geral';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('descubra_active_tab', activeTab);
+  }, [activeTab]);
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
