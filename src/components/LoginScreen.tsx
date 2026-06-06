@@ -163,11 +163,11 @@ export default function LoginScreen({
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="max-w-5xl w-full space-y-4 z-10 flex flex-col">
+      <div className="max-w-5xl w-full space-y-3.5 z-10 flex flex-col">
         {/* Title area */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-1.5">
           <div className="inline-flex p-1 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 rounded-2xl shadow-xl shadow-emerald-900/40">
-            <Compass className="w-6 h-6 animate-spin-slow" />
+            <Compass className="w-5 h-5 animate-spin-slow" />
           </div>
           
           <div className="space-y-0.5">
@@ -175,7 +175,7 @@ export default function LoginScreen({
               <span className="text-[10px] uppercase font-mono tracking-widest text-emerald-400 font-extrabold bg-emerald-950/60 border border-emerald-800/40 px-2 rounded-full py-0.5">SISTEMA INTEGRADO</span>
               <span className="px-1.5 py-0.5 text-[9px] font-semibold bg-orange-600 text-white rounded-full">HACKATHON PIRAPORA</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans mt-1.5">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white font-sans mt-1">
               TRAJETÓRIA DESCUBRA+
             </h1>
             <p className="text-[11px] text-slate-400 max-w-xl mx-auto">
@@ -188,15 +188,15 @@ export default function LoginScreen({
         <div className="max-w-md w-full mx-auto">
           
           {/* LOGIN FORM CARD */}
-          <div className="bg-slate-900/85 border border-slate-800/85 rounded-2xl p-5 shadow-2xl flex flex-col justify-between backdrop-blur-sm relative">
+          <div className="bg-slate-900/85 border border-slate-800/85 rounded-2xl p-4.5 shadow-2xl flex flex-col justify-between backdrop-blur-sm relative">
             <div>
-              <div className="mb-4">
+              <div className="mb-3.5">
                 <h2 className="text-sm font-extrabold text-white uppercase tracking-wider font-mono border-l-2 border-emerald-500 pl-2">Acessar Conta</h2>
                 <p className="text-[10px] text-slate-400 mt-0.5">Informe suas credenciais ou selecione um perfil de simulação abaixo.</p>
               </div>
 
               {/* SIMULATION MODE TRIGGER BANNER */}
-              <div className="mb-4 bg-slate-950 border border-slate-800/70 p-3 rounded-xl flex items-center justify-between gap-2 text-left">
+              <div className="mb-3.5 bg-slate-950 border border-slate-800/70 p-2.5 rounded-xl flex items-center justify-between gap-2 text-left">
                 <div className="font-mono text-left">
                   <span className="block font-black text-emerald-400 uppercase tracking-widest text-[9px] mb-0.5">🚀 SIMULAÇÃO ATIVA</span>
                   <span className="text-[10px] text-slate-400 block leading-tight">Escolha um perfil para autopreencher os acessos.</span>
@@ -205,7 +205,7 @@ export default function LoginScreen({
                   type="button"
                   id="btn-open-shortcut-modal"
                   onClick={() => setIsModalOpen(true)}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-black rounded uppercase tracking-wider text-[9px] transition-all cursor-pointer shadow shadow-emerald-950/40 select-none shrink-0"
+                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-black rounded uppercase tracking-wider text-[9px] transition-all cursor-pointer shadow shadow-emerald-950/40 select-none shrink-0"
                 >
                   Escolher Perfil
                 </button>

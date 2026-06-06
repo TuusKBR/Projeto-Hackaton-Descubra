@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+:root {
+  --app-zoom: 1.25; /* Altere para 1.2, 1.25 ou qualquer outro valor para ajustar o tamanho sem quebrar o layout */
+}
+
+#root {
+  zoom: var(--app-zoom);
+}
+
+#applet-container,
+#login-screen-view {
+  min-height: calc(100vh / var(--app-zoom)) !important;
+}
+
+html, body {
+  overflow-x: hidden;
+  background-color: #020617; /* slate-950 background default */
+}
