@@ -216,16 +216,6 @@ export default function DashboardSidebar({
             <h2 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 px-2 py-0.5 mb-1 font-mono">OPÇÕES DA EMPRESA</h2>
             
             <button 
-              id="nav-sub-empresa-insert"
-              onClick={() => {
-                setActiveTab('empresa_publicar');
-              }}
-              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'empresa_publicar' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
-              <Plus className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Publicar Vaga Ap.</span>
-            </button>
-
-            <button 
               id="nav-sub-empresa-matches"
               onClick={() => {
                 setActiveTab('empresa_match');
@@ -233,6 +223,16 @@ export default function DashboardSidebar({
               className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'empresa_match' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
               <Compass className="w-3.5 h-3.5 text-emerald-400" />
               <span>Matchmaking Jovem</span>
+            </button>
+
+            <button 
+              id="nav-sub-empresa-insert"
+              onClick={() => {
+                setActiveTab('empresa_publicar');
+              }}
+              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'empresa_publicar' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+              <Plus className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Publicar Vaga Ap.</span>
             </button>
           </div>
         )}

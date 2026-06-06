@@ -242,7 +242,7 @@ export default function App() {
         cidade: 'Pirapora',
         email: 'rh@minasligas.com.br'
       });
-      setActiveTab('empresa_publicar');
+      setActiveTab('empresa_match');
     } else if (role === 'jovem') {
       const activeYouth = jovens.find(j => j.id === selectedJovemId) || jovens[0] || {
         id: '00000000-0000-0000-b000-000000000001',
