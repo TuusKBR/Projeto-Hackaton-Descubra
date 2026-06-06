@@ -30,6 +30,7 @@ export default function CompanyDashboard({
 }: CompanyDashboardProps) {
   
   const [selectedVacancyForMatch, setSelectedVacancyForMatch] = useState<Vaga | null>(null);
+  const [visibleCount, setVisibleCount] = useState(5);
   
   // Calculate coordinates distance helper for frontend matches rendering
   const getProximityBonus = (b1: string, b2: string) => {
@@ -237,7 +238,10 @@ export default function CompanyDashboard({
                                 <button
                                   type="button"
                                   id={`btn-ver-recomendacoes-${v.id}`}
-                                  onClick={() => setSelectedVacancyForMatch(v)}
+                                  onClick={() => {
+                                    setSelectedVacancyForMatch(v);
+                                    setVisibleCount(5);
+                                  }}
                                   className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 font-mono font-black text-xs uppercase text-white rounded transition shadow-md flex items-center justify-center gap-1.5 cursor-pointer self-start sm:self-center"
                                 >
                                   <Sparkles className="w-4 h-4 animate-pulse text-amber-300" />
@@ -278,7 +282,8 @@ export default function CompanyDashboard({
           });
 
         const top3 = candidates.slice(0, 3);
-        const supplemental5 = candidates.slice(3, 8);
+        const supplementalList = candidates.slice(3, 3 + visibleCount);
+        const hasMore = candidates.length > 3 + visibleCount;
 
         return (
           <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -397,16 +402,16 @@ export default function CompanyDashboard({
                     </div>
                   </div>
 
-                  {/* SECTION 2: SUPPLEMENTAL 5 RECOMENDADOS */}
-                  {supplemental5.length > 0 && (
+                  {/* SECTION 2: SUPPLEMENTAL RECOMENDADOS */}
+                  {supplementalList.length > 0 && (
                     <div>
                       <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest font-mono mb-4 flex items-center gap-2 border-l-2 border-emerald-500 pl-2">
                         <Users className="w-4 h-4 text-emerald-400" />
-                        Próximas 5 Alternativas de Impacto Recomendadas
+                        Outras Alternativas de Impacto Recomendadas ({supplementalList.length} exibidos)
                       </h4>
 
                       <div className="space-y-2.5">
-                        {supplemental5.map((j) => {
+                        {supplementalList.map((j) => {
                           return (
                             <div 
                               key={j.id} 
@@ -418,7 +423,7 @@ export default function CompanyDashboard({
                                   <span className={`text-[9px] md:text-[10px] px-2 py-0.5 rounded font-mono font-black ${j.distBonus.bg}`}>
                                     {j.distBonus.text}
                                   </span>
-                                  <span className="text-[10px] text-slate-500">
+                                  <span className="text-[10px] text-slate-505">
                                     {j.idade} anos | {j.genero}
                                   </span>
                                 </div>
@@ -446,6 +451,20 @@ export default function CompanyDashboard({
                           );
                         })}
                       </div>
+
+                      {hasMore && (
+                        <div className="mt-4 flex justify-center">
+                          <button
+                            type="button"
+                            id="btn-ver-mais-alunos"
+                            onClick={() => setVisibleCount(prev => prev + 10)}
+                            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/30 text-xs font-mono text-emerald-400 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shadow-md font-bold"
+                          >
+                            <Plus className="w-4 h-4 text-emerald-400" />
+                            Ver mais alunos ({candidates.length - 3 - visibleCount} restantes)
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
