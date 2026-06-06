@@ -1,17 +1,58 @@
 # 🧭 REMIX: TRAJETÓRIA DESCUBRA+
 
-> 🏆 **PROJETO DESENVOLVIDO PARA HACKATHON**
-> 
-> Esta plataforma foi idealizada, prototipada e implementada sob a pressão de tempo e escopo de um Hackathon, com o objetivo de demonstrar como a tecnologia e o design centrado no ser humano podem combater a evasão social de jovens aprendizes pioneiros da microrregião de Pirapora-MG.
-> 
-> **A Tese Desenvolvida:** O abandono do jovem e o descumprimento de cotas pelas empresas não ocorrem por falta de interesse, mas por **falhas de infraestrutura, comunicação e falta de rede de apoio preditiva em tempo hábil**. Ao conectar os quatro elos do ecossistema (*Coordenação*, *CRAS*, *Empresas* e *Estudante*) e aplicar inteligência preditiva nas faltas e barreiras territoriais, provamos que é possível realizar intervenções protetivas antes do abandono acontecer.
+## 🚀 Demonstração Online
+
+➡️ **[Acessar Sistema](https://hackaton-descubra.onrender.com)**  
+
+📂 **Repositório:** [https://github.com/TuusKBR/Projeto-Hackaton-V2](https://github.com/TuusKBR/Projeto-Hackaton-V2)
+
+🏗️ **Arquitetura**
+
+*   **Frontend**
+    *   React 18
+    *   TypeScript
+    *   Vite
+    *   Tailwind CSS
+*   **Backend**
+    *   Node.js
+    *   Express
+*   **Persistência**
+    *   `state.json` (persistência local para demonstração e prototipação)
+    *   Scripts PostgreSQL preparados para migração futura
 
 ---
 
-### 📌 Sobre o projeto
+🏆 **PROJETO DESENVOLVIDO PARA HACKATHON**
+
+Esta plataforma foi idealizada, prototipada e implementada sob a pressão de tempo e escopo de um Hackathon, com o objetivo de demonstrar como a tecnologia e o design centrado no ser humano podem combater a evasão social de jovens aprendizes pioneiros da microrregião de Pirapora-MG.
+
+**A Tese Desenvolvida:** O abandono do jovem e o descumprimento de cotas pelas empresas não ocorrem por falta de interesse, mas por falhas de infraestrutura, comunicação e falta de rede de apoio preditiva em tempo hábil.
+
+---
+
+📌 **Sobre o projeto**
+
 O **Trajetória Descubra+** foi desenhado com foco na desburocratização e centralização de atores sociais vitais para o ecossistema de aprendizagem profissional e assistência do município de Pirapora-MG e cidades adjacentes. A plataforma atua unindo pontas essenciais: **Poder Público (CRAS/CREAS e Coordenação)**, **Grandes Empresas Locais** e os **Jovens Participantes**.
 
 Procuramos provar que inteligência preditiva, geolocalização e engajamento gamificado em rede de apoio direta conseguem manter jovens extremamente vulneráveis ativos nas trilhas de capacitação profissional em polos industriais de difícil deslocamento.
+
+---
+
+📸 **Screenshots**
+
+Confira abaixo as principais telas do nosso ecossistema integrado:
+
+#### Dashboard do Coordenador
+![Dashboard do Coordenador](docs/screenshots/coordenador.png)
+
+#### Painel CRAS
+![Painel CRAS](docs/screenshots/cras.png)
+
+#### Portal do Estudante
+![Portal do Estudante](docs/screenshots/estudante.png)
+
+#### Portal da Empresa
+![Portal da Empresa](docs/screenshots/empresa.png)
 
 ---
 
@@ -139,8 +180,15 @@ Visão otimizada para dispositivos móveis com foco em autoimagem positiva e aut
 
 ---
 
-### 👨‍💻 Autores
-Desenvolvido por Abraão Rubens, Kauã Ribeiro e Vitor Rafael
+### 👨‍💻 Equipe
+
+Desenvolvido por:
+
+- Abraão Rubens
+- Kauã Ribeiro
+- Vitor Rafael
+
+Hackathon Descubra+ 2026
 
 ---
 
