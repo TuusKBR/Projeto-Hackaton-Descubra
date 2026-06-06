@@ -46,6 +46,19 @@ export default function App() {
     localStorage.setItem('descubra_is_logged_in', isLoggedIn ? 'true' : 'false');
   }, [isLoggedIn]);
 
+  // Set title and favicon dynamically matching the green compass theme
+  useEffect(() => {
+    document.title = 'Trajetória Descubra+ | Portal de Inclusão';
+    let link: HTMLLinkElement | null = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.type = 'image/svg+xml';
+    link.href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolygon points='16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76'%3E%3C/polygon%3E%3C/svg%3E";
+  }, []);
+
   // Helper to log in from portal buttons
   const handleLoginAs = (role: string) => {
     handleRoleSwitch(role);
@@ -282,12 +295,12 @@ export default function App() {
         faltas_consecutivas: 0,
         desempenho: 'bom' as const,
         vulnerabilidade_tipo: 'Nenhuma',
-        problemas_familiares: '',
-        problema_fisico_saude: '',
-        percepcao_familia_obs: '',
         renda_familiar: 1200,
         status: 'pré-aprendizagem' as const,
-        possui_mei: false
+        possui_mei: false,
+        problemas_familiares: 'Não relatado',
+        problema_fisico_saude: 'Não relatado',
+        percepcao_familia_obs: 'Nenhuma observação complementar registrada.'
       });
       await loadAllData();
       setActiveTab('coord_mesa');
