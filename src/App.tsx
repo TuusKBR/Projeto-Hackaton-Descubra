@@ -644,6 +644,7 @@ export default function App() {
               newVaga={newVaga}
               setNewVaga={setNewVaga}
               handleCriarVaga={handleCriarVaga}
+              currentUser={currentUser}
             />
           )}
 

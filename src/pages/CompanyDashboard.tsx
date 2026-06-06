@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Compass, X, Award, Sparkles, Check, Users, Search, MessageSquare } from 'lucide-react';
+import { Plus, Compass, X, Award, Sparkles, Check, Users, Search, MessageSquare, FileText } from 'lucide-react';
 import { Vaga, Jovem } from '../types';
 
 interface CompanyDashboardProps {
@@ -18,6 +18,14 @@ interface CompanyDashboardProps {
   };
   setNewVaga: (vaga: any) => void;
   handleCriarVaga: (e: React.FormEvent) => void;
+  currentUser?: {
+    id: string;
+    nome: string;
+    tipo: string;
+    bairro: string;
+    cidade: string;
+    email: string;
+  };
 }
 
 export default function CompanyDashboard({
@@ -26,7 +34,8 @@ export default function CompanyDashboard({
   jovens,
   newVaga,
   setNewVaga,
-  handleCriarVaga
+  handleCriarVaga,
+  currentUser
 }: CompanyDashboardProps) {
   
   const [selectedVacancyForMatch, setSelectedVacancyForMatch] = useState<Vaga | null>(null);
@@ -46,6 +55,31 @@ export default function CompanyDashboard({
     if (proximas[b1]?.includes(b2)) return { text: 'Região Próxima', bg: 'bg-teal-950/70 text-teal-300 border border-teal-900/40' };
     return { text: 'Outra Região', bg: 'bg-slate-900 text-slate-400 border border-slate-800' };
   };
+
+  const getMyCompanyVagas = () => {
+    const userEmail = (currentUser?.email || '').toLowerCase();
+    const userNome = (currentUser?.nome || '').toLowerCase();
+    const userId = currentUser?.id || '';
+    
+    return vagas.filter(v => {
+      // 1. Minas Ligas match (empresa-1, user-empresa, or emails containing 'minas')
+      if (userId === 'empresa-1' || userId === 'user-empresa' || userEmail.includes('minas') || userNome.includes('minas')) {
+        return v.empresa_id === 'empresa-1' || v.empresa_id === 'user-empresa' || v.empresa_nome.toLowerCase().includes('minas');
+      }
+      // 2. Comercial Pirapora match (empresa-3, or emails/names containing 'comercial')
+      if (userId === 'empresa-3' || userEmail.includes('comercial') || userNome.includes('comercial')) {
+        return v.empresa_id === 'empresa-3' || v.empresa_nome.toLowerCase().includes('comercial');
+      }
+      // 3. Liasa match (empresa-2, or emails/names containing 'liasa')
+      if (userId === 'empresa-2' || userEmail.includes('liasa') || userNome.includes('liasa')) {
+        return v.empresa_id === 'empresa-2' || v.empresa_nome.toLowerCase().includes('liasa');
+      }
+      // Fallback: match by matching id or matching company name
+      return v.empresa_id === userId || v.empresa_nome.toLowerCase() === userNome;
+    });
+  };
+
+  const myVagas = getMyCompanyVagas();
 
   return (
     <div className="lg:col-span-9 xl:col-span-10 flex flex-col gap-4" id="company-dashboard-panels">
@@ -247,6 +281,77 @@ export default function CompanyDashboard({
                                   <Sparkles className="w-4 h-4 animate-pulse text-amber-300" />
                                   Ver Recomendações
                                 </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* MY COMPANY JOB OPENINGS (MINHAS VAGAS) */}
+            {activeTab === 'empresa_vagas' && (
+              <div id="minhas-vagas-publicadas-card" className="col-span-12 bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 flex flex-col justify-between shadow-xl animate-fade-in">
+                <div>
+                  <div className="flex items-center gap-3 mb-5 border-b border-slate-900 pb-4">
+                    <FileText className="w-6 h-6 text-emerald-400" />
+                    <div>
+                      <h3 className="font-bold text-white text-xl md:text-2xl uppercase tracking-wide font-mono">
+                        Nossas Vagas Publicadas ({myVagas.length})
+                      </h3>
+                      <p className="text-xs md:text-sm text-slate-400 mt-1">
+                        Gerencie as vagas publicadas por sua corporação no programa Jovem Aprendiz de Pirapora-MG.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {myVagas.length === 0 ? (
+                      <div className="text-center py-16 bg-slate-900/30 rounded-xl border border-slate-850 border-dashed text-slate-500 font-mono text-sm leading-relaxed flex flex-col items-center justify-center gap-4">
+                        <span>Sua empresa ainda não possui vagas cadastradas ou publicadas.</span>
+                        <span className="text-xs text-slate-400 block max-w-md">Para começar a recrutar e receber indicações do matchmaking, crie uma primeira vaga!</span>
+                      </div>
+                    ) : (
+                      myVagas.map((v) => {
+                        return (
+                          <div key={v.id} className="bg-slate-900/40 hover:bg-slate-900/70 p-4 rounded-xl border border-slate-850 shadow-inner flex flex-col md:flex-row gap-4 justify-between items-start md:items-center transition duration-150">
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs uppercase font-extrabold text-emerald-400 font-mono bg-emerald-950 px-2.5 py-0.5 rounded border border-emerald-900/30">
+                                  {v.empresa_nome}
+                                </span>
+                                <span className="text-[10px] uppercase font-bold text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                                  {v.bairro}
+                                </span>
+                                <span className="text-[10.5px] font-mono font-black text-amber-400 bg-amber-950/40 border border-amber-900/30 px-2 py-0.5 rounded">
+                                  {v.status === 'aberta' ? '● Aberta (Match Ativo)' : 'Fechada'}
+                                </span>
+                              </div>
+                              <h4 className="text-base md:text-lg font-bold text-white uppercase font-mono">{v.titulo}</h4>
+                              <p className="text-xs text-slate-400 leading-relaxed font-sans max-w-xl">{v.descricao}</p>
+                              
+                              <div className="flex flex-wrap gap-1.5 pt-1.5">
+                                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-bold mr-1.5 self-center font-mono">Competências exigidas:</span>
+                                {(Array.isArray(v.habilidades) ? v.habilidades : typeof v.habilidades === 'string' ? (v.habilidades as string).split(',').map(s => s.trim()) : []).map((h, i) => (
+                                  <span key={i} className="text-[10px] font-mono text-emerald-300 bg-emerald-955 px-2 py-0.5 rounded border border-emerald-900/20 font-semibold">
+                                    {h}
+                                  </span>
+                                ))}
+                              </div>
+
+                              <div className="text-[11px] text-slate-400 space-y-0.5 font-sans pt-1">
+                                <div><strong className="text-slate-300 font-medium font-mono text-[10px]">REQUISITOS:</strong> {v.requisitos}</div>
+                                <div><strong className="text-slate-300 font-medium font-mono text-[10px]">POLO DE TRABALHO:</strong> {v.bairro}, {v.cidade} - MG</div>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2 w-full md:w-auto shrink-0 md:border-l md:border-slate-800/80 md:pl-5 pt-3 md:pt-0">
+                              <div className="text-left md:text-center">
+                                <span className="block text-slate-500 text-[10px] uppercase tracking-wider font-mono">Quantidade Solicitada:</span>
+                                <span className="block text-xl font-bold font-mono text-white mt-0.5">{v.quantidade} vaga(s)</span>
                               </div>
                             </div>
                           </div>

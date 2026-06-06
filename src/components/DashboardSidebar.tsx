@@ -124,6 +124,16 @@ export default function DashboardSidebar({
             </button>
 
             <button 
+              id="nav-sub-coord-cursos"
+              onClick={() => {
+                setActiveTab('coord_cursos');
+              }}
+              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'coord_cursos' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Cursos</span>
+            </button>
+
+            <button 
               id="nav-sub-coord-insert"
               onClick={() => {
                 setActiveTab('coord_cadastro');
@@ -138,19 +148,9 @@ export default function DashboardSidebar({
               onClick={() => {
                 setActiveTab('coord_import');
               }}
-              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'coord_import' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'coord_import' ? 'bg-slate-850 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
               <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
               <span>Importação CSV</span>
-            </button>
-
-            <button 
-              id="nav-sub-coord-cursos"
-              onClick={() => {
-                setActiveTab('coord_cursos');
-              }}
-              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'coord_cursos' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
-              <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Cursos</span>
             </button>
           </div>
         )}
@@ -223,6 +223,16 @@ export default function DashboardSidebar({
               className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'empresa_match' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
               <Compass className="w-3.5 h-3.5 text-emerald-400" />
               <span>Matchmaking Jovem</span>
+            </button>
+
+            <button 
+              id="nav-sub-empresa-vagas-my"
+              onClick={() => {
+                setActiveTab('empresa_vagas');
+              }}
+              className={`w-full text-left flex items-center gap-2.5 px-3 py-2 text-slate-300 rounded-md text-xs font-bold transition duration-205 border-l-2 cursor-pointer ${activeTab === 'empresa_vagas' ? 'bg-slate-800 border-emerald-500 text-white shadow-md' : 'border-transparent hover:bg-slate-900/60'}`}>
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Minhas Vagas</span>
             </button>
 
             <button 
