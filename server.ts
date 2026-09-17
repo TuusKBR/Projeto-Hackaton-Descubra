@@ -52,8 +52,8 @@ const initialJovens: Jovem[] = [
     raca: 'Parda',
     bairro: 'Santo Antônio',
     cidade: 'Pirapora',
-    lat: -17.3510,
-    lng: -44.9450,
+    lat: -17.3475,
+    lng: -44.9580,
     vulnerabilidade_tipo: 'Medida Socioeducativa',
     encaminhado_por: 'CREAS Pirapora',
     escolaridade: 'Ensino Médio Incompleto',
@@ -82,8 +82,8 @@ const initialJovens: Jovem[] = [
     raca: 'Preta',
     bairro: 'Planalto',
     cidade: 'Pirapora',
-    lat: -17.3380,
-    lng: -44.9280,
+    lat: -17.3375,
+    lng: -44.9515,
     vulnerabilidade_tipo: 'Egresso de acolhimento',
     encaminhado_por: 'CRAS Pirapora (Santo Antônio)',
     escolaridade: 'Ensino Médio Incompleto',
@@ -112,8 +112,8 @@ const initialJovens: Jovem[] = [
     raca: 'Branca',
     bairro: 'Centro',
     cidade: 'Pirapora',
-    lat: -17.3444,
-    lng: -44.9392,
+    lat: -17.3455,
+    lng: -44.9410,
     vulnerabilidade_tipo: 'Nenhuma',
     encaminhado_por: 'E.E. Professor Geraldo de Paula Souza',
     escolaridade: 'Ensino Fundamental Incompleto',
@@ -142,8 +142,8 @@ const initialJovens: Jovem[] = [
     raca: 'Parda',
     bairro: 'São Geraldo',
     cidade: 'Pirapora',
-    lat: -17.3580,
-    lng: -44.9350,
+    lat: -17.3550,
+    lng: -44.9480,
     vulnerabilidade_tipo: 'Trabalho Infantil',
     encaminhado_por: 'CRAS Pirapora (Santo Antônio)',
     escolaridade: 'Ensino Médio Incompleto',
@@ -172,8 +172,8 @@ const initialJovens: Jovem[] = [
     raca: 'Preta',
     bairro: 'Vila Rica',
     cidade: 'Pirapora',
-    lat: -17.3480,
-    lng: -44.9520,
+    lat: -17.3255,
+    lng: -44.9385,
     vulnerabilidade_tipo: 'Pobreza Extrema',
     encaminhado_por: 'CREAS Pirapora',
     escolaridade: 'Ensino Médio Incompleto',
@@ -226,8 +226,8 @@ const initialEmpresas: Empresa[] = [
     cnpj: '25.312.445/0002-11',
     bairro: 'Centro',
     cidade: 'Pirapora',
-    lat: -17.3444,
-    lng: -44.9392,
+    lat: -17.3455,
+    lng: -44.9410,
     total_funcionarios: 120,
     cota_minima: 6,
     cotas_preenchidas: 4
@@ -261,8 +261,8 @@ const initialVagas: Vaga[] = [
     quantidade: 2,
     bairro: 'Centro',
     cidade: 'Pirapora',
-    lat: -17.3444,
-    lng: -44.9392,
+    lat: -17.3455,
+    lng: -44.9410,
     status: 'aberta'
   },
   {
@@ -276,8 +276,8 @@ const initialVagas: Vaga[] = [
     quantidade: 3,
     bairro: 'Planalto',
     cidade: 'Pirapora',
-    lat: -17.3380,
-    lng: -44.9280,
+    lat: -17.3375,
+    lng: -44.9515,
     status: 'aberta'
   }
 ];
@@ -696,13 +696,13 @@ app.post('/api/jovens', (req, res) => {
 
   // Coordinates by Bairro of Pirapora mapping
   const coordMap: { [key: string]: { lat: number, lng: number } } = {
-    'Centro': { lat: -17.3444, lng: -44.9392 },
-    'Santo Antônio': { lat: -17.3510, lng: -44.9450 },
-    'Planalto': { lat: -17.3380, lng: -44.9280 },
-    'São Geraldo': { lat: -17.3580, lng: -44.9350 },
-    'Vila Rica': { lat: -17.3480, lng: -44.9520 },
-    'Cidade Jardim': { lat: -17.3610, lng: -44.9550 },
-    'Sagrada Família': { lat: -17.3660, lng: -44.9480 },
+    'Centro': { lat: -17.3455, lng: -44.9410 },
+    'Santo Antônio': { lat: -17.3475, lng: -44.9580 },
+    'Planalto': { lat: -17.3375, lng: -44.9515 },
+    'São Geraldo': { lat: -17.3550, lng: -44.9480 },
+    'Vila Rica': { lat: -17.3255, lng: -44.9385 },
+    'Cidade Jardim': { lat: -17.3408, lng: -44.9335 },
+    'Sagrada Família': { lat: -17.3320, lng: -44.9455 },
     'Buritizeiro': { lat: -17.3512, lng: -44.9620 },
     'Jequitaí': { lat: -17.2215, lng: -44.4361 }
   };
@@ -772,13 +772,13 @@ app.post('/api/jovens/import', (req, res) => {
   const jovensImported: Jovem[] = [];
 
   const coordMap: { [key: string]: { lat: number, lng: number } } = {
-    'Centro': { lat: -17.3444, lng: -44.9392 },
-    'Santo Antônio': { lat: -17.3510, lng: -44.9450 },
-    'Planalto': { lat: -17.3380, lng: -44.9280 },
-    'São Geraldo': { lat: -17.3580, lng: -44.9350 },
-    'Vila Rica': { lat: -17.3480, lng: -44.9520 },
-    'Cidade Jardim': { lat: -17.3610, lng: -44.9550 },
-    'Sagrada Família': { lat: -17.3660, lng: -44.9480 },
+    'Centro': { lat: -17.3455, lng: -44.9410 },
+    'Santo Antônio': { lat: -17.3475, lng: -44.9580 },
+    'Planalto': { lat: -17.3375, lng: -44.9515 },
+    'São Geraldo': { lat: -17.3550, lng: -44.9480 },
+    'Vila Rica': { lat: -17.3255, lng: -44.9385 },
+    'Cidade Jardim': { lat: -17.3408, lng: -44.9335 },
+    'Sagrada Família': { lat: -17.3320, lng: -44.9455 },
     'Buritizeiro': { lat: -17.3512, lng: -44.9620 },
     'Jequitaí': { lat: -17.2215, lng: -44.4361 }
   };
@@ -1097,14 +1097,14 @@ app.post('/api/vagas', (req, res) => {
 
   // Map coordinates
   const coordMap: { [key: string]: { lat: number, lng: number } } = {
-    'Centro': { lat: -17.3444, lng: -44.9392 },
-    'Santo Antônio': { lat: -17.3510, lng: -44.9450 },
-    'Planalto': { lat: -17.3380, lng: -44.9280 },
-    'São Geraldo': { lat: -17.3580, lng: -44.9350 },
-    'Vila Rica': { lat: -17.3480, lng: -44.9520 },
-    'Cidade Jardim': { lat: -17.3610, lng: -44.9550 },
-    'Sagrada Família': { lat: -17.3660, lng: -44.9480 },
-    'Industrial': { lat: -17.3300, lng: -44.9150 },
+    'Centro': { lat: -17.3455, lng: -44.9410 },
+    'Santo Antônio': { lat: -17.3475, lng: -44.9580 },
+    'Planalto': { lat: -17.3375, lng: -44.9515 },
+    'São Geraldo': { lat: -17.3550, lng: -44.9480 },
+    'Vila Rica': { lat: -17.3255, lng: -44.9385 },
+    'Cidade Jardim': { lat: -17.3408, lng: -44.9335 },
+    'Sagrada Família': { lat: -17.3320, lng: -44.9455 },
+    'Industrial': { lat: -17.3520, lng: -44.9270 },
     'Buritizeiro': { lat: -17.3512, lng: -44.9620 }
   };
   const coords = coordMap[novaVaga.bairro] || { lat: -17.3444, lng: -44.9392 };

@@ -8,7 +8,7 @@ import { Jovem } from '../types';
 import { calcularRisco } from '../utils/calculadoraRisco';
 
 const token = import.meta.env.VITE_MAPBOX_TOKEN?.trim() || '';
-const center: [number, number] = [-44.9392, -17.3444];
+const center: [number, number] = [-44.9410, -17.3455];
 const riskLevels = [
   { key: 'baixo', label: 'Baixo risco', color: '#34d399' },
   { key: 'medio', label: 'Médio risco', color: '#fbbf24' },
