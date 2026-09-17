@@ -19,6 +19,7 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "lucide-react": "^0.546.0",
+    "mapbox-gl": "^3.31.0",
     "motion": "^12.23.24",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^22.14.0",
     "@types/react": "^19.2.17",
     "autoprefixer": "^10.4.21",

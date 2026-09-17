@@ -246,7 +246,9 @@ export default function App() {
     } else if (role === 'jovem') {
       const activeYouth = jovens.find(j => j.id === selectedJovemId) || jovens[0] || {
         id: '00000000-0000-0000-b000-000000000001',
-        nome: 'João Victor Mendes'
+        nome: 'João Victor Mendes',
+        bairro: 'Santo Antônio',
+        cidade: 'Pirapora'
       };
       setCurrentUser({
         id: activeYouth.id,

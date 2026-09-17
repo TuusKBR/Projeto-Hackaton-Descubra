@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { 
   Users, ShieldAlert, FileSpreadsheet, User, Plus, Search, 
   Clock, Edit, ChevronDown, ChevronUp, Map, BookOpen, List, 
@@ -8,6 +8,7 @@ import { Jovem, Alerta, ProgressoCurso } from '../types';
 import { MEI_COURSES, DESCUBRA_JOVEM_COURSES } from '../data';
 import { apiService } from '../services/api';
 import { calcularRisco } from '../utils/calculadoraRisco';
+const CoordinatorHeatmap = lazy(() => import('../components/CoordinatorHeatmap'));
 
 interface CoordinatorDashboardProps {
   activeTab: string;
@@ -229,70 +230,9 @@ export default function CoordinatorDashboard({
 
               {/* NEIGHBORHOOD MAP OF HEAT */}
               {activeTab === 'coord_mapa' && (
-                <div id="mapa-calor-card" className="lg:col-span-12 max-w-5xl mx-auto w-full bg-slate-950 p-4 md:p-5 rounded-xl border border-slate-800 shadow-xl">
-                  <div className="flex items-center gap-2.5 mb-3 border-b border-slate-900 pb-2.5">
-                    <Map className="w-6 h-6 text-emerald-400 animate-pulse" />
-                    <div>
-                      <h3 className="font-bold text-white text-lg md:text-xl uppercase tracking-tight font-mono">
-                        Mapa de Calor de Pirapora
-                      </h3>
-                      <p className="text-xs text-slate-400 mt-0.5">Adensamento de vulnerabilidade e taxa de empregabilidade real por microrregião de atuação</p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {dbStats?.bairroStats ? (
-                      dbStats.bairroStats.map((st: any) => {
-                        const statusTag = st.taxa_contratacao > 65 ? { text: 'Estabilidade', color: 'bg-green-950 text-green-300 border-green-800' } :
-                                          st.taxa_contratacao > 35 ? { text: 'Atenção', color: 'bg-amber-950 text-amber-300 border-amber-900' } :
-                                          { text: 'CRAS Urgente', color: 'bg-red-950 text-red-300 border-red-900' };
-
-                        return (
-                          <div key={st.bairro} className="bg-slate-900 p-4 rounded-lg border border-slate-800/80 hover:border-slate-700/85 transition duration-200 shadow-md flex flex-col justify-between">
-                            <div>
-                              <div className="flex justify-between items-start gap-2 mb-2">
-                                <span className="font-extrabold text-white text-base font-mono tracking-tight">{st.bairro}</span>
-                                <span className={`px-2 py-0.5 text-[9px] font-bold rounded-full uppercase border ${statusTag.color}`}>
-                                  {statusTag.text}
-                                </span>
-                              </div>
-
-                              <div className="flex items-baseline justify-between mb-2">
-                                <span className="text-[10px] text-slate-400 uppercase font-mono font-semibold">Inclusão:</span>
-                                <span className="text-xl font-black text-emerald-400 font-mono">
-                                  {st.taxa_contratacao}%
-                                </span>
-                              </div>
-                              
-                              <div className="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800 shadow-inner">
-                                <div 
-                                  className="h-full rounded-full transition-all duration-300"
-                                  style={{ 
-                                    width: `${st.taxa_contratacao || 5}%`,
-                                    backgroundColor: st.taxa_contratacao > 60 ? '#10B981' : st.taxa_contratacao > 30 ? '#F59E0B' : '#DC2626'
-                                  }}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-slate-800 text-xs font-mono text-slate-300">
-                              <div className="bg-slate-950 p-1.5 rounded text-center border border-slate-800/60">
-                                <span className="block text-[8px] text-slate-400 uppercase font-semibold">Monitorados</span>
-                                <b className="text-slate-200 text-xs">{st.jovens} Jovens</b>
-                              </div>
-                              <div className="bg-slate-950 p-1.5 rounded text-center border border-slate-800/60">
-                                <span className="block text-[8px] text-slate-400 uppercase font-semibold">Score Médio</span>
-                                <b className="text-emerald-400 text-xs">{st.avg_score_empregabilidade || 50}</b>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <p className="text-xs text-slate-400 text-center py-6 col-span-3 italic">Nenhum dado consolidado de Pirapora.</p>
-                    )}
-                  </div>
-                </div>
+                <Suspense fallback={<p role="status" className="lg:col-span-12 p-5 text-slate-400">Carregando visualização territorial…</p>}>
+                  <CoordinatorHeatmap jovens={jovens} />
+                </Suspense>
               )}
 
               {/* DETAILED HIGH FIDELITY TABLE */}

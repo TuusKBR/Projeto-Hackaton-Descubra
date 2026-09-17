@@ -134,6 +134,20 @@ Visão otimizada para dispositivos móveis com foco em autoimagem positiva e aut
 
 ### 🚀 Como executar o projeto
 
+#### Mapa de calor do coordenador (Mapbox)
+
+Crie um token público (`pk...`) em https://account.mapbox.com/access-tokens/ e adicione ao arquivo `.env.local` na raiz, preservando as outras variáveis:
+
+```dotenv
+VITE_MAPBOX_TOKEN=pk.seu_token_publico
+```
+
+Reinicie `npm run dev` após configurar. Para publicação, configure a mesma variável no serviço que gera o frontend e faça uma nova build. Se houver restrições de URL no token, autorize o endereço local e o domínio publicado. Use somente token público, pois variáveis `VITE_` são incluídas no navegador. O uso do mapa segue os limites e preços da conta Mapbox.
+
+Na aba **Mapa de Calor**, alterne entre concentração de jovens e concentração ponderada pela pontuação de risco de evasão. Os filtros de bairro e risco também afetam os indicadores. Selecione os círculos no mapa ou a lista de bairros para consultar os detalhes. A escala de calor é relativa e varia com o zoom.
+
+Os dados vêm dos jovens carregados pelo sistema. Cadastros e importações podem compartilhar coordenadas de referência do bairro; o mapa representa localização aproximada, sem inventar posições residenciais. Registros sem coordenadas válidas são contabilizados separadamente. Sem token, a tela exibe instruções de configuração e mantém os indicadores por bairro disponíveis.
+
 1.  **Garanta a instalação das dependências estáticas do Node:**
     ```bash
     npm install
