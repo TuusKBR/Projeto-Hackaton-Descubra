@@ -144,7 +144,9 @@ VITE_MAPBOX_TOKEN=pk.seu_token_publico
 
 Reinicie `npm run dev` após configurar. Para publicação, configure a mesma variável no serviço que gera o frontend e faça uma nova build. Se houver restrições de URL no token, autorize o endereço local e o domínio publicado. Use somente token público, pois variáveis `VITE_` são incluídas no navegador. O uso do mapa segue os limites e preços da conta Mapbox.
 
-Na aba **Mapa de Calor**, alterne entre concentração de jovens e concentração ponderada pela pontuação de risco de evasão. Os filtros de bairro e risco também afetam os indicadores. Selecione os círculos no mapa ou a lista de bairros para consultar os detalhes. A escala de calor é relativa e varia com o zoom.
+Na aba **Mapa de Calor**, a visualização inicial **Níveis de risco por bairro** mostra círculos com faixas proporcionais: verde para baixo risco, amarelo para médio e vermelho para alto. O número central é o total de jovens, incluindo os de baixo risco. Selecione um círculo ou um bairro na lista para consultar as quantidades de cada nível, contratação e empregabilidade.
+
+Também é possível alternar para concentração de jovens ou concentração ponderada pela pontuação de risco de evasão. Os filtros de bairro e risco afetam o mapa e os indicadores. A escala de calor é relativa e varia com o zoom; suas cores representam intensidade, não a classificação individual de risco.
 
 Os dados vêm dos jovens carregados pelo sistema. Cadastros e importações podem compartilhar coordenadas de referência do bairro; o mapa representa localização aproximada, sem inventar posições residenciais. Registros sem coordenadas válidas são contabilizados separadamente. Sem token, a tela exibe instruções de configuração e mantém os indicadores por bairro disponíveis.
 

@@ -7,13 +7,23 @@ import { calcularRisco } from '../utils/calculadoraRisco';
 
 const token = import.meta.env.VITE_MAPBOX_TOKEN?.trim() || '';
 const center: [number, number] = [-44.9392, -17.3444];
+const riskLevels = [
+  { key: 'baixo', label: 'Baixo risco', color: '#34d399' },
+  { key: 'medio', label: 'Médio risco', color: '#fbbf24' },
+  { key: 'alto', label: 'Alto risco', color: '#f87171' },
+] as const;
+function countRisk(members: Jovem[]) {
+  const counts = { baixo: 0, medio: 0, alto: 0 };
+  members.forEach(j => { counts[calcularRisco(j).classificacao]++; });
+  return counts;
+}
 
 export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
-  const [mode, setMode] = useState('density');
+  const [mode, setMode] = useState('levels');
   const [bairro, setBairro] = useState('');
   const [risco, setRisco] = useState('');
   const [selected, setSelected] = useState('');
@@ -27,7 +37,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   const groups = useMemo(() => {
     const result = new globalThis.Map<string, Jovem[]>();
     located.forEach(j => result.set(keyOf(j), [...(result.get(keyOf(j)) || []), j]));
-    return Array.from(result, ([key, members]) => ({ key, members,
+    return Array.from(result, ([key, members]) => ({ key, members, risks: countRisk(members),
       label: `${members[0].bairro} · ${members[0].cidade}`,
       lng: members.reduce((n, j) => n + j.lng, 0) / members.length,
       lat: members.reduce((n, j) => n + j.lat, 0) / members.length,
@@ -43,6 +53,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     properties: { key: g.key, count: g.members.length },
   })) }), [groups]);
   const detail = groups.find(g => g.key === selected);
+  const totals = useMemo(() => countRisk(located), [located]);
 
   useEffect(() => {
     if (!token || !container.current) return;
@@ -93,6 +104,38 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     (map.current.getSource('bairros') as GeoJSONSource).setData(neighborhoods);
   }, [ready, points, neighborhoods]);
 
+  useEffect(() => {
+    const instance = map.current;
+    if (!ready || !instance) return;
+    const visibility = mode === 'levels' ? 'none' : 'visible';
+    ['heat', 'bairros', 'counts'].forEach(id => instance.setLayoutProperty(id, 'visibility', visibility));
+    if (mode !== 'levels') return;
+
+    // One proportional ring per neighborhood keeps overlapping reference coordinates readable.
+    const markers = groups.map(group => {
+      const greenEnd = group.risks.baixo / group.members.length * 100;
+      const yellowEnd = greenEnd + group.risks.medio / group.members.length * 100;
+      const button = document.createElement('button');
+      button.type = 'button';
+      const description = `${group.label}: ${group.members.length} jovens; ${group.risks.baixo} em baixo risco, ${group.risks.medio} em médio risco e ${group.risks.alto} em alto risco`;
+      button.setAttribute('aria-label', description);
+      button.setAttribute('aria-pressed', String(selected === group.key));
+      button.title = description;
+      button.style.cssText = 'width:48px;height:48px;border:2px solid #0f172a;border-radius:50%;padding:5px;cursor:pointer;box-shadow:0 3px 12px #0008;';
+      button.style.background = `conic-gradient(#34d399 0% ${greenEnd}%, #fbbf24 ${greenEnd}% ${yellowEnd}%, #f87171 ${yellowEnd}% 100%)`;
+      if (selected === group.key) button.style.borderColor = '#ffffff';
+      const count = document.createElement('span');
+      count.style.cssText = 'display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;background:#0f172a;color:white;font:bold 13px system-ui;';
+      count.textContent = String(group.members.length);
+      button.appendChild(count);
+      button.addEventListener('click', () => setSelected(group.key));
+      const marker = new mapboxgl.Marker({ element: button }).setLngLat([group.lng, group.lat]).addTo(instance);
+      button.setAttribute('role', 'button');
+      return marker;
+    });
+    return () => { markers.forEach(marker => marker.remove()); };
+  }, [ready, mode, groups, selected]);
+
   const fit = () => {
     if (!map.current || !located.length) return;
     const bounds = new mapboxgl.LngLatBounds();
@@ -116,6 +159,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
         </div></div>
         <div className="flex flex-wrap gap-3 mt-5">
           <label className="text-xs text-slate-400 flex flex-col gap-1">Visualização<select className={selectClass} value={mode} onChange={e => setMode(e.target.value)}>
+            <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
           <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { setBairro(e.target.value); setSelected(''); }}>
@@ -130,10 +174,10 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
         <div className="min-w-0">
           <div className="flex flex-wrap gap-x-6 gap-y-1 px-5 py-3 text-sm border-b border-slate-800 text-slate-400">
             <span><b className="text-white">{located.length}</b> jovens no mapa</span><span><b className="text-white">{groups.length}</b> bairros</span>
-            <span><b className="text-orange-400">{located.filter(j => calcularRisco(j).classificacao === 'alto').length}</b> em alto risco</span>
+            {riskLevels.map(level => <span key={level.key}><b style={{ color: level.color }}>{totals[level.key]}</b> {level.label.toLowerCase()}</span>)}
           </div>
           <div className="relative bg-slate-900">
-            <div ref={container} className="h-[420px] md:h-[560px]" role="region" aria-label="Mapa interativo de concentração de jovens" />
+            <div ref={container} className="h-[420px] md:h-[560px]" role="region" aria-label="Mapa interativo de distribuição e risco dos jovens" />
             {!token ? <div className="absolute inset-0 flex items-center justify-center p-8"><div className="max-w-md text-center">
               <MapIcon className="w-12 h-12 text-emerald-400 mx-auto mb-4" /><h4 className="text-white font-bold text-lg">Configure o mapa Mapbox</h4>
               <p className="text-slate-300 text-sm mt-3">Adicione seu token público em <code>.env.local</code>:</p>
@@ -146,8 +190,13 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             {error && <div role="alert" className="absolute bottom-12 left-4 right-4 bg-slate-950 border border-amber-500/50 p-4 rounded-lg text-sm text-amber-200">{error}<button type="button" className="block mt-2 underline" onClick={() => setAttempt(n => n + 1)}>Tentar novamente</button></div>}
           </div>
           <div className="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
-            <div className="flex items-center gap-3"><span>Menor intensidade</span><div className="h-2 rounded-full flex-1 max-w-48" style={{ background: 'linear-gradient(to right, #10b981, #22d3ee, #facc15, #fb923c, #ef4444)' }} /><span>Maior intensidade</span></div>
-            <p>{mode === 'density' ? 'A intensidade representa a concentração de jovens na área.' : 'A intensidade combina a concentração de jovens e a pontuação de risco de evasão do sistema.'} A escala é relativa e varia com o zoom.</p>
+            {mode === 'levels' ? <>
+              <div className="flex flex-wrap gap-4">{riskLevels.map(level => <span key={level.key} className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: level.color }} />{level.label}</span>)}</div>
+              <p>Cada círculo mostra o total de jovens do bairro. As faixas coloridas representam a proporção em cada nível de risco, incluindo os jovens de baixo risco. Selecione um bairro para ver as quantidades.</p>
+            </> : <>
+              <div className="flex items-center gap-3"><span>Menor intensidade</span><div className="h-2 rounded-full flex-1 max-w-48" style={{ background: 'linear-gradient(to right, #10b981, #22d3ee, #facc15, #fb923c, #ef4444)' }} /><span>Maior intensidade</span></div>
+              <p>{mode === 'density' ? 'A intensidade representa a concentração de jovens na área, não o nível de risco.' : 'A intensidade combina a concentração de jovens e a pontuação de risco de evasão do sistema.'} A escala é relativa e varia com o zoom.</p>
+            </>}
             <p>Localização aproximada: cadastros e importações podem utilizar coordenadas de referência do bairro, não endereços residenciais.</p>
             {filtered.length > located.length && <p className="text-amber-300">{filtered.length - located.length} cadastro(s) sem coordenadas válidas não aparecem no mapa.</p>}
           </div>
@@ -164,7 +213,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
               <div><dt>Jovens monitorados</dt><dd className="text-white font-bold">{detail.members.length}</dd></div>
               <div><dt>Taxa de contratação</dt><dd className="text-white font-bold">{Math.round(detail.members.filter(j => j.status === 'aprendiz_contratado').length / detail.members.length * 100)}%</dd></div>
               <div><dt>Score médio de empregabilidade</dt><dd className="text-white font-bold">{Math.round(detail.members.reduce((n, j) => n + (j.score_empregabilidade ?? 0), 0) / detail.members.length)}</dd></div>
-              <div><dt>Jovens em alto risco</dt><dd className="text-orange-400 font-bold">{detail.members.filter(j => calcularRisco(j).classificacao === 'alto').length}</dd></div>
+              {riskLevels.map(level => <div key={level.key} className="flex items-center justify-between gap-2"><dt>{level.label}</dt><dd className="font-bold" style={{ color: level.color }}>{detail.risks[level.key]}</dd></div>)}
             </dl>
           </div>}
         </aside>
