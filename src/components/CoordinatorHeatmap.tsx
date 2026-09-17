@@ -242,7 +242,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
             <option value="">Todos os bairros</option>{bairros.map(key => { const [city, name] = JSON.parse(key); return <option key={key} value={key}>{name} · {city}</option>; })}
           </select></label>
           <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { setRisco(e.target.value); setSelected(''); }}>
@@ -256,7 +256,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             {riskLevels.map(level => <span key={level.key}><b style={{ color: level.color }}>{totals[level.key]}</b> {level.label.toLowerCase()}</span>)}
           </div>
           <div className="relative bg-slate-900">
-            <div ref={container} className="h-[420px] md:h-[560px]" role="region" aria-label="Mapa interativo de distribuição e risco dos jovens" />
+            <div id="mapa-calor-mapa" ref={container} className="h-[420px] md:h-[560px]" role="region" aria-label="Mapa interativo de distribuição e risco dos jovens" />
             {!token ? <div className="absolute inset-0 flex items-center justify-center p-8"><div className="max-w-md text-center">
               <MapIcon className="w-12 h-12 text-emerald-400 mx-auto mb-4" /><h4 className="text-white font-bold text-lg">Configure o mapa Mapbox</h4>
               <p className="text-slate-300 text-sm mt-3">Adicione seu token público em <code>.env.local</code>:</p>
