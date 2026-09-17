@@ -33,13 +33,14 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   const popupHost = useMemo(() => document.createElement('div'), []);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const positioningPopup = useRef(false);
+  const pinned = useRef(false);
   const cancelClose = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = null;
   }, []);
   const scheduleClose = useCallback(() => {
     cancelClose();
-    if (positioningPopup.current) return;
+    if (positioningPopup.current || pinned.current) return;
     closeTimer.current = setTimeout(() => setSelected(''), 350);
   }, [cancelClose]);
   const openDetails = useCallback((key: string) => {
@@ -102,14 +103,14 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
         instance.addLayer({ id: 'counts', type: 'symbol', source: 'bairros', layout: {
           'text-field': ['to-string', ['get', 'count']], 'text-size': 12, 'text-allow-overlap': true,
         }, paint: { 'text-color': '#ffffff' } });
-        instance.on('click', 'bairros', e => openDetails(e.features?.[0]?.properties?.key || ''));
+        instance.on('click', 'bairros', e => { pinned.current = false; openDetails(e.features?.[0]?.properties?.key || ''); });
         instance.on('mouseenter', 'bairros', () => { instance.getCanvas().style.cursor = 'pointer'; cancelClose(); });
         instance.on('mouseleave', 'bairros', () => {
           instance.getCanvas().style.cursor = '';
           if (window.matchMedia('(hover: hover)').matches) scheduleClose();
         });
         instance.on('click', e => {
-          if (!instance.queryRenderedFeatures(e.point, { layers: ['bairros'] }).length) setSelected('');
+          if (!instance.queryRenderedFeatures(e.point, { layers: ['bairros'] }).length) { pinned.current = false; setSelected(''); }
         });
         setError('');
         setReady(true);
@@ -173,7 +174,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     const leavePopup = (event: PointerEvent) => { if (event.pointerType === 'mouse') scheduleClose(); };
     element.addEventListener('pointerenter', cancelClose);
     element.addEventListener('pointerleave', leavePopup);
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setSelected(''); };
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { pinned.current = false; setSelected(''); } };
     document.addEventListener('keydown', escape);
     return () => {
       cancelClose();
@@ -238,14 +239,14 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
           <p className="text-sm text-slate-400 mt-1">Distribuição territorial dos jovens acompanhados pelo programa</p>
         </div></div>
         <div className="flex flex-wrap gap-3 mt-5">
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Visualização<select className={selectClass} value={mode} onChange={e => { setMode(e.target.value); setSelected(''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Visualização<select className={selectClass} value={mode} onChange={e => { pinned.current = false; setMode(e.target.value); setSelected(''); }}>
             <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; pinned.current = !!val; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
             <option value="">Todos os bairros</option>{bairros.map(key => { const [city, name] = JSON.parse(key); return <option key={key} value={key}>{name} · {city}</option>; })}
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { setRisco(e.target.value); setSelected(''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { pinned.current = false; setRisco(e.target.value); setSelected(''); }}>
             <option value="">Todos os níveis</option><option value="baixo">Baixo</option><option value="medio">Médio</option><option value="alto">Alto</option>
           </select></label>
         </div>
@@ -284,7 +285,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
           <div role="dialog" aria-label={`Indicadores de ${detail.label}`} className="p-4 text-left">
             <div className="flex items-start justify-between gap-3 mb-3">
               <h5 className="font-semibold text-emerald-400 text-base">{detail.label}</h5>
-              <button type="button" aria-label="Fechar indicadores do bairro" onClick={() => { cancelClose(); setSelected(''); }} className="shrink-0 w-7 h-7 rounded text-slate-300 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-emerald-400 text-xl leading-none">×</button>
+              <button type="button" aria-label="Fechar indicadores do bairro" onClick={() => { cancelClose(); pinned.current = false; setSelected(''); }} className="shrink-0 w-7 h-7 rounded text-slate-300 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-emerald-400 text-xl leading-none">×</button>
             </div>
             <dl className="text-sm space-y-3 text-slate-400">
               <div><dt>Jovens monitorados</dt><dd className="text-white font-bold">{detail.members.length}</dd></div>
