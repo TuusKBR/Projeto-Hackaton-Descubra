@@ -9,6 +9,18 @@ import { calcularRisco } from '../utils/calculadoraRisco';
 
 const token = import.meta.env.VITE_MAPBOX_TOKEN?.trim() || '';
 const center: [number, number] = [-44.9410, -17.3455];
+const neighborhoodCoords: Record<string, [number, number]> = {
+  'Centro': [-44.9410, -17.3455],
+  'Santo Antônio': [-44.9580, -17.3475],
+  'Planalto': [-44.9515, -17.3375],
+  'São Geraldo': [-44.9480, -17.3550],
+  'Vila Rica': [-44.9385, -17.3255],
+  'Cidade Jardim': [-44.9335, -17.3408],
+  'Sagrada Família': [-44.9455, -17.3320],
+  'Industrial': [-44.9270, -17.3520],
+  'Buritizeiro': [-44.9620, -17.3512],
+  'Jequitaí': [-44.4361, -17.2215],
+};
 const riskLevels = [
   { key: 'baixo', label: 'Baixo risco', color: '#34d399' },
   { key: 'medio', label: 'Médio risco', color: '#fbbf24' },
@@ -53,11 +65,15 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   const groups = useMemo(() => {
     const result = new globalThis.Map<string, Jovem[]>();
     located.forEach(j => result.set(keyOf(j), [...(result.get(keyOf(j)) || []), j]));
-    return Array.from(result, ([key, members]) => ({ key, members, risks: countRisk(members),
-      label: `${members[0].bairro} · ${members[0].cidade}`,
-      lng: members.reduce((n, j) => n + j.lng, 0) / members.length,
-      lat: members.reduce((n, j) => n + j.lat, 0) / members.length,
-    })).sort((a, b) => b.members.length - a.members.length);
+    return Array.from(result, ([key, members]) => {
+      const bairroName = members[0].bairro;
+      const official = neighborhoodCoords[bairroName];
+      return { key, members, risks: countRisk(members),
+        label: `${bairroName} · ${members[0].cidade}`,
+        lng: official ? official[0] : members.reduce((n, j) => n + j.lng, 0) / members.length,
+        lat: official ? official[1] : members.reduce((n, j) => n + j.lat, 0) / members.length,
+      };
+    }).sort((a, b) => b.members.length - a.members.length);
   }, [located]);
   const points = useMemo(() => ({ type: 'FeatureCollection' as const, features: located.map(j => ({
     type: 'Feature' as const,
