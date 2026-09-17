@@ -228,9 +228,6 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   };
   useEffect(() => { if (ready) fit(); }, [ready, located]);
 
-  const selectGroup = (key: string) => {
-    openDetails(key);
-  };
   const selectClass = 'bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 max-w-full';
   return (
     <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
@@ -244,7 +241,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { setBairro(e.target.value); setSelected(''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); }}>
             <option value="">Todos os bairros</option>{bairros.map(key => { const [city, name] = JSON.parse(key); return <option key={key} value={key}>{name} · {city}</option>; })}
           </select></label>
           <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { setRisco(e.target.value); setSelected(''); }}>
@@ -252,8 +249,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
           </select></label>
         </div>
       </header>
-      <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_260px]">
-        <div className="min-w-0">
+      <div className="grid grid-cols-1">
           <div className="flex flex-wrap gap-x-6 gap-y-1 px-5 py-3 text-sm border-b border-slate-800 text-slate-400">
             <span><b className="text-white">{located.length}</b> jovens no mapa</span><span><b className="text-white">{groups.length}</b> bairros</span>
             {riskLevels.map(level => <span key={level.key}><b style={{ color: level.color }}>{totals[level.key]}</b> {level.label.toLowerCase()}</span>)}
@@ -274,7 +270,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
           <div className="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
             {mode === 'levels' ? <>
               <div className="flex flex-wrap gap-4">{riskLevels.map(level => <span key={level.key} className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: level.color }} />{level.label}</span>)}</div>
-              <p>Cada círculo mostra o total de jovens do bairro. As faixas coloridas representam a proporção em cada nível de risco, incluindo os jovens de baixo risco. Selecione um bairro para ver as quantidades.</p>
+              <p>Cada círculo mostra o total de jovens do bairro. As faixas coloridas representam a proporção em cada nível de risco, incluindo os jovens de baixo risco. Selecione um bairro no filtro acima ou clique no mapa para ver as quantidades.</p>
             </> : <>
               <div className="flex items-center gap-3"><span>Menor intensidade</span><div className="h-2 rounded-full flex-1 max-w-48" style={{ background: 'linear-gradient(to right, #10b981, #22d3ee, #facc15, #fb923c, #ef4444)' }} /><span>Maior intensidade</span></div>
               <p>{mode === 'density' ? 'A intensidade representa a concentração de jovens na área, não o nível de risco.' : 'A intensidade combina a concentração de jovens e a pontuação de risco de evasão do sistema.'} A escala é relativa e varia com o zoom.</p>
@@ -282,14 +278,6 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             <p>Localização aproximada: cadastros e importações podem utilizar coordenadas de referência do bairro, não endereços residenciais.</p>
             {filtered.length > located.length && <p className="text-amber-300">{filtered.length - located.length} cadastro(s) sem coordenadas válidas não aparecem no mapa.</p>}
           </div>
-        </div>
-        <aside className="p-4 border-t xl:border-t-0 xl:border-l border-slate-800">
-          <h4 className="text-white font-semibold">Explorar bairros</h4><p className="text-xs text-slate-400 mt-1 mb-4">Clique no marcador ou na lista para abrir os indicadores em um popup no mapa.</p>
-          {!groups.length && <p role="status" className="text-sm text-slate-400">Nenhum jovem com localização para os filtros selecionados.</p>}
-          <div className="max-h-64 overflow-y-auto space-y-2">
-            {groups.map(g => <button key={g.key} type="button" aria-pressed={selected === g.key} onClick={() => selectGroup(g.key)} className={`w-full text-left p-3 rounded-lg border flex items-center justify-between gap-2 text-sm ${selected === g.key ? 'border-emerald-500 bg-emerald-950/40 text-emerald-300' : 'border-slate-800 text-slate-300 hover:bg-slate-900'}`}><span>{g.label}</span><b>{g.members.length}</b></button>)}
-          </div>
-        </aside>
       </div>
       {ready && detail && createPortal(
           <div role="dialog" aria-label={`Indicadores de ${detail.label}`} className="p-4 text-left">
