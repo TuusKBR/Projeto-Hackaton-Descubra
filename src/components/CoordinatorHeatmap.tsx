@@ -133,7 +133,12 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     if (!ready || !map.current || !detail) return;
     const instance = map.current;
     instance.stop();
-    instance.flyTo({ center: [detail.lng, detail.lat], zoom: 14, duration: 700 });
+    if (pinned.current) {
+      instance.setCenter([detail.lng, detail.lat]);
+      instance.setZoom(14);
+    } else {
+      instance.flyTo({ center: [detail.lng, detail.lat], zoom: 14, duration: 700 });
+    }
     const point = instance.project([detail.lng, detail.lat]);
     const anchor = point.y < instance.getContainer().clientHeight / 2 ? 'top' : 'bottom';
     const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false,
@@ -149,6 +154,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
         const mapElement = instance.getContainer();
         content.style.maxHeight = `${Math.min(350, Math.max(120, mapElement.clientHeight - 100))}px`;
         content.style.width = `${Math.min(280, Math.max(160, mapElement.clientWidth - 48))}px`;
+        if (pinned.current) return;
         // Measure the rendered portal, rather than the empty popup at creation time.
         const bounds = mapElement.getBoundingClientRect();
         const box = element.getBoundingClientRect();
@@ -188,7 +194,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
       document.removeEventListener('keydown', escape);
       popup.remove();
     };
-  }, [ready, detail, mode, popupHost, cancelClose, scheduleClose]);
+  }, [ready, detail?.key, mode, popupHost, cancelClose, scheduleClose]);
 
   useEffect(() => {
     const instance = map.current;
