@@ -5,10 +5,10 @@
 
 import { Jovem, Empresa, Vaga, Match, Alerta, AcompanhamentoSocial, Microtarefa, MicrotarefaRealizada, DoacaoPasses, SolicitacaoPasses, ProgressoCurso } from '../types';
 
-export const API_URL = ''; // Same host
+export const API_URL = import.meta.env.VITE_API_URL || ''; // Same host locally, Render URL in production
 
 export async function fetchJson(url: string, options?: RequestInit) {
-  const res = await fetch(url, {
+  const res = await fetch(`${API_URL}${url}`, {
     ...options,
     headers: {
       'Content-Type': 'application/json',

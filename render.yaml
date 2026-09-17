@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: descubra-mais-api
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build:server
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        value: https://descubramais.netlify.app
