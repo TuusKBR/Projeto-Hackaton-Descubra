@@ -232,7 +232,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
 
   const selectClass = 'bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 max-w-full';
   return (
-    <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+    <section id="mapa-calor-card" className="lg:col-span-10 lg:col-start-2 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
       <header className="p-5 border-b border-slate-800">
         <div className="flex items-center gap-3"><MapIcon className="text-emerald-400 w-7 h-7" /><div>
           <h3 className="text-xl font-bold text-white">Mapa de calor de Pirapora e região</h3>
@@ -257,7 +257,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             {riskLevels.map(level => <span key={level.key}><b style={{ color: level.color }}>{totals[level.key]}</b> {level.label.toLowerCase()}</span>)}
           </div>
           <div className="relative bg-slate-900">
-            <div id="mapa-calor-mapa" ref={container} className="h-[360px] md:h-[480px]" role="region" aria-label="Mapa interativo de distribuição e risco dos jovens" />
+            <div id="mapa-calor-mapa" ref={container} className="h-[280px] md:h-[380px]" role="region" aria-label="Mapa interativo de distribuição e risco dos jovens" />
             {!token ? <div className="absolute inset-0 flex items-center justify-center p-8"><div className="max-w-md text-center">
               <MapIcon className="w-12 h-12 text-emerald-400 mx-auto mb-4" /><h4 className="text-white font-bold text-lg">Configure o mapa Mapbox</h4>
               <p className="text-slate-300 text-sm mt-3">Adicione seu token público em <code>.env.local</code>:</p>
