@@ -231,7 +231,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
 
   const selectClass = 'bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 max-w-full';
   return (
-    <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+    <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl mr-3">
       <header className="p-5 border-b border-slate-800">
         <div className="flex items-center gap-3"><MapIcon className="text-emerald-400 w-7 h-7" /><div>
           <h3 className="text-xl font-bold text-white">Mapa de calor de Pirapora e região</h3>
