@@ -222,6 +222,14 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   };
   useEffect(() => { if (ready) fit(); }, [ready, located]);
 
+  useEffect(() => {
+    if (!ready || !map.current || !bairro) return;
+    const group = groups.find(g => g.key === bairro);
+    if (group) {
+      map.current.flyTo({ center: [group.lng, group.lat], zoom: 14, duration: 700 });
+    }
+  }, [ready, bairro, groups]);
+
   const selectClass = 'bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 max-w-full';
   return (
     <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
@@ -235,7 +243,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
             <option value="">Todos os bairros</option>{bairros.map(key => { const [city, name] = JSON.parse(key); return <option key={key} value={key}>{name} · {city}</option>; })}
           </select></label>
           <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { setRisco(e.target.value); setSelected(''); }}>
