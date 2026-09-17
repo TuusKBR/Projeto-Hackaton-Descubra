@@ -148,7 +148,9 @@ Na aba **Mapa de Calor**, a visualização inicial **Níveis de risco por bairro
 
 Também é possível alternar para concentração de jovens ou concentração ponderada pela pontuação de risco de evasão. Os filtros de bairro e risco afetam o mapa e os indicadores. A escala de calor é relativa e varia com o zoom; suas cores representam intensidade, não a classificação individual de risco.
 
-Os dados vêm dos jovens carregados pelo sistema. Cadastros e importações podem compartilhar coordenadas de referência do bairro; o mapa representa localização aproximada, sem inventar posições residenciais. Registros sem coordenadas válidas são contabilizados separadamente. Sem token, a tela exibe instruções de configuração e mantém os indicadores por bairro disponíveis.
+Os indicadores detalhados aparecem somente em um popup no mapa após clicar no marcador ou no bairro da lista. O popup permanece aberto durante a passagem do mouse entre o marcador e seu conteúdo, e fecha ao sair dos dois (com pequeno atraso), pelo botão ×, pela tecla Escape ou ao clicar no fundo do mapa. No celular, use × ou toque no fundo do mapa.
+
+Os dados vêm dos jovens carregados pelo sistema. Cadastros e importações podem compartilhar coordenadas de referência do bairro; o mapa representa localização aproximada, sem inventar posições residenciais. Registros sem coordenadas válidas são contabilizados separadamente. Sem token, a tela exibe instruções de configuração e mantém a lista de bairros e as contagens gerais disponíveis.
 
 1.  **Garanta a instalação das dependências estáticas do Node:**
     ```bash
