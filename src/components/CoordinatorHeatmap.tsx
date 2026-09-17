@@ -132,6 +132,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     if (!ready || !map.current || !detail) return;
     const instance = map.current;
     instance.stop();
+    instance.flyTo({ center: [detail.lng, detail.lat], zoom: 14, duration: 700 });
     const point = instance.project([detail.lng, detail.lat]);
     const anchor = point.y < instance.getContainer().clientHeight / 2 ? 'top' : 'bottom';
     const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false,
