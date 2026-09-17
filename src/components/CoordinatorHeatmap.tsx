@@ -32,15 +32,12 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
   const [attempt, setAttempt] = useState(0);
   const popupHost = useMemo(() => document.createElement('div'), []);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const positioningPopup = useRef(false);
-  const pinned = useRef(false);
   const cancelClose = useCallback(() => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = null;
   }, []);
   const scheduleClose = useCallback(() => {
     cancelClose();
-    if (positioningPopup.current || pinned.current) return;
     closeTimer.current = setTimeout(() => setSelected(''), 350);
   }, [cancelClose]);
   const openDetails = useCallback((key: string) => {
@@ -103,14 +100,14 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
         instance.addLayer({ id: 'counts', type: 'symbol', source: 'bairros', layout: {
           'text-field': ['to-string', ['get', 'count']], 'text-size': 12, 'text-allow-overlap': true,
         }, paint: { 'text-color': '#ffffff' } });
-        instance.on('click', 'bairros', e => { pinned.current = false; openDetails(e.features?.[0]?.properties?.key || ''); });
+        instance.on('click', 'bairros', e => openDetails(e.features?.[0]?.properties?.key || ''));
         instance.on('mouseenter', 'bairros', () => { instance.getCanvas().style.cursor = 'pointer'; cancelClose(); });
         instance.on('mouseleave', 'bairros', () => {
           instance.getCanvas().style.cursor = '';
           if (window.matchMedia('(hover: hover)').matches) scheduleClose();
         });
         instance.on('click', e => {
-          if (!instance.queryRenderedFeatures(e.point, { layers: ['bairros'] }).length) { pinned.current = false; setSelected(''); }
+          if (!instance.queryRenderedFeatures(e.point, { layers: ['bairros'] }).length) setSelected('');
         });
         setError('');
         setReady(true);
@@ -133,29 +130,20 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     if (!ready || !map.current || !detail) return;
     const instance = map.current;
     instance.stop();
-    if (pinned.current) {
-      instance.setCenter([detail.lng, detail.lat]);
-      instance.setZoom(14);
-    } else {
-      instance.flyTo({ center: [detail.lng, detail.lat], zoom: 14, duration: 700 });
-    }
-    const point = instance.project([detail.lng, detail.lat]);
-    const anchor = point.y < instance.getContainer().clientHeight / 2 ? 'top' : 'bottom';
+    instance.flyTo({ center: [detail.lng, detail.lat], zoom: 14, duration: 700 });
     const popup = new mapboxgl.Popup({ closeButton: false, closeOnClick: false,
-      focusAfterOpen: false, anchor, maxWidth: '280px', offset: 28, className: 'coordinator-map-popup' })
+      focusAfterOpen: false, maxWidth: '280px', offset: 28, className: 'coordinator-map-popup' })
       .setLngLat([detail.lng, detail.lat]).setDOMContent(popupHost).addTo(instance);
     const element = popup.getElement();
     const content = element.querySelector<HTMLElement>('.mapboxgl-popup-content')!;
     let frame = 0;
-    const finishPositioning = () => { positioningPopup.current = false; };
+    const finishPositioning = () => { };
     const keepVisible = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const mapElement = instance.getContainer();
         content.style.maxHeight = `${Math.min(350, Math.max(120, mapElement.clientHeight - 100))}px`;
         content.style.width = `${Math.min(280, Math.max(160, mapElement.clientWidth - 48))}px`;
-        if (pinned.current) return;
-        // Measure the rendered portal, rather than the empty popup at creation time.
         const bounds = mapElement.getBoundingClientRect();
         const box = element.getBoundingClientRect();
         const margin = 20;
@@ -165,7 +153,6 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
           : Math.max(0, box.bottom - bounds.bottom + margin);
         if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
         cancelClose();
-        positioningPopup.current = true;
         instance.off('moveend', finishPositioning);
         instance.once('moveend', finishPositioning);
         instance.panBy([dx * mapElement.clientWidth / bounds.width, dy * mapElement.clientHeight / bounds.height], {
@@ -180,7 +167,7 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
     const leavePopup = (event: PointerEvent) => { if (event.pointerType === 'mouse') scheduleClose(); };
     element.addEventListener('pointerenter', cancelClose);
     element.addEventListener('pointerleave', leavePopup);
-    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { pinned.current = false; setSelected(''); } };
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') setSelected(''); };
     document.addEventListener('keydown', escape);
     return () => {
       cancelClose();
@@ -188,13 +175,12 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
       observer.disconnect();
       instance.off('resize', keepVisible);
       instance.off('moveend', finishPositioning);
-      positioningPopup.current = false;
       element.removeEventListener('pointerenter', cancelClose);
       element.removeEventListener('pointerleave', leavePopup);
       document.removeEventListener('keydown', escape);
       popup.remove();
     };
-  }, [ready, detail?.key, mode, popupHost, cancelClose, scheduleClose]);
+  }, [ready, detail, mode, popupHost, cancelClose, scheduleClose]);
 
   useEffect(() => {
     const instance = map.current;
@@ -238,21 +224,21 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
 
   const selectClass = 'bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 max-w-full';
   return (
-    <section id="mapa-calor-card" className="lg:col-span-12 w-[calc(100%-1.5rem)] mx-auto bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+    <section id="mapa-calor-card" className="lg:col-span-12 w-full min-w-0 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
       <header className="p-5 border-b border-slate-800">
         <div className="flex items-center gap-3"><MapIcon className="text-emerald-400 w-7 h-7" /><div>
           <h3 className="text-xl font-bold text-white">Mapa de calor de Pirapora e região</h3>
           <p className="text-sm text-slate-400 mt-1">Distribuição territorial dos jovens acompanhados pelo programa</p>
         </div></div>
         <div className="flex flex-wrap gap-3 mt-5">
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Visualização<select className={selectClass} value={mode} onChange={e => { pinned.current = false; setMode(e.target.value); setSelected(''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Visualização<select className={selectClass} value={mode} onChange={e => { setMode(e.target.value); setSelected(''); }}>
             <option value="levels">Níveis de risco por bairro</option>
             <option value="density">Concentração de jovens</option><option value="risk">Concentração ponderada por risco</option>
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; pinned.current = !!val; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Bairro<select className={selectClass} value={bairro} onChange={e => { const val = e.target.value; setBairro(val); setSelected(val ? groups.find(g => g.key === val)?.key || '' : ''); document.getElementById('mapa-calor-mapa')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>
             <option value="">Todos os bairros</option>{bairros.map(key => { const [city, name] = JSON.parse(key); return <option key={key} value={key}>{name} · {city}</option>; })}
           </select></label>
-          <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { pinned.current = false; setRisco(e.target.value); setSelected(''); }}>
+          <label className="text-xs text-slate-400 flex flex-col gap-1">Risco de evasão<select className={selectClass} value={risco} onChange={e => { setRisco(e.target.value); setSelected(''); }}>
             <option value="">Todos os níveis</option><option value="baixo">Baixo</option><option value="medio">Médio</option><option value="alto">Alto</option>
           </select></label>
         </div>
@@ -275,23 +261,22 @@ export default function CoordinatorHeatmap({ jovens }: { jovens: Jovem[] }) {
             </>}
             {error && <div role="alert" className="absolute bottom-12 left-4 right-4 bg-slate-950 border border-amber-500/50 p-4 rounded-lg text-sm text-amber-200">{error}<button type="button" className="block mt-2 underline" onClick={() => setAttempt(n => n + 1)}>Tentar novamente</button></div>}
           </div>
-          <div className="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
-            {mode === 'levels' ? <>
-              <div className="flex flex-wrap gap-4">{riskLevels.map(level => <span key={level.key} className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: level.color }} />{level.label}</span>)}</div>
-              <p>Cada círculo mostra o total de jovens do bairro. As faixas coloridas representam a proporção em cada nível de risco, incluindo os jovens de baixo risco. Selecione um bairro no filtro acima ou clique no mapa para ver as quantidades.</p>
-            </> : <>
-              <div className="flex items-center gap-3"><span>Menor intensidade</span><div className="h-2 rounded-full flex-1 max-w-48" style={{ background: 'linear-gradient(to right, #10b981, #22d3ee, #facc15, #fb923c, #ef4444)' }} /><span>Maior intensidade</span></div>
-              <p>{mode === 'density' ? 'A intensidade representa a concentração de jovens na área, não o nível de risco.' : 'A intensidade combina a concentração de jovens e a pontuação de risco de evasão do sistema.'} A escala é relativa e varia com o zoom.</p>
-            </>}
-            <p>Localização aproximada: cadastros e importações podem utilizar coordenadas de referência do bairro, não endereços residenciais.</p>
-            {filtered.length > located.length && <p className="text-amber-300">{filtered.length - located.length} cadastro(s) sem coordenadas válidas não aparecem no mapa.</p>}
-          </div>
-      </div>
+        </div>
+        <div className="p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
+          {mode === 'levels' ? <>
+            <div className="flex flex-wrap gap-4">{riskLevels.map(level => <span key={level.key} className="flex items-center gap-2"><span className="w-3 h-3 rounded-full" style={{ background: level.color }} />{level.label}</span>)}</div>
+            <p>Cada círculo mostra o total de jovens do bairro. As faixas coloridas representam a proporção em cada nível de risco, incluindo os jovens de baixo risco. Selecione um bairro no filtro acima ou clique no mapa para ver as quantidades.</p>
+          </> : <>
+            <div className="flex items-center gap-3"><span>Menor intensidade</span><div className="h-2 rounded-full flex-1 max-w-48" style={{ background: 'linear-gradient(to right, #10b981, #22d3ee, #fb923c, #ef4444)' }} /><span>Maior intensidade</span></div>
+            <p>{mode === 'density' ? 'A intensidade representa a concentração de jovens na área, não o nível de risco.' : 'A intensidade combina a concentração de jovens e a pontuação de risco de evasão do sistema.'} A escala é relativa e varia com o zoom.</p>
+          </>}
+          {filtered.length > located.length && <p className="text-amber-300">{filtered.length - located.length} cadastro(s) sem coordenadas válidas não aparecem no mapa.</p>}
+        </div>
       {ready && detail && createPortal(
           <div role="dialog" aria-label={`Indicadores de ${detail.label}`} className="p-4 text-left">
             <div className="flex items-start justify-between gap-3 mb-3">
               <h5 className="font-semibold text-emerald-400 text-base">{detail.label}</h5>
-              <button type="button" aria-label="Fechar indicadores do bairro" onClick={() => { cancelClose(); pinned.current = false; setSelected(''); }} className="shrink-0 w-7 h-7 rounded text-slate-300 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-emerald-400 text-xl leading-none">×</button>
+              <button type="button" aria-label="Fechar indicadores do bairro" onClick={() => { cancelClose(); setSelected(''); }} className="shrink-0 w-7 h-7 rounded text-slate-300 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-emerald-400 text-xl leading-none">×</button>
             </div>
             <dl className="text-sm space-y-3 text-slate-400">
               <div><dt>Jovens monitorados</dt><dd className="text-white font-bold">{detail.members.length}</dd></div>
