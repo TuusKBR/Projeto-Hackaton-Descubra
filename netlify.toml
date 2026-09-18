@@ -1,6 +1,14 @@
 [build]
-  command = "npm run build:client"
+  command = "npm install && npm run build:client"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/:splat"
+  status = 404
 
 [[redirects]]
   from = "/*"

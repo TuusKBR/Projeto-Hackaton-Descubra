@@ -32,6 +32,11 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Health check for Render
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Paths definitions
 const DB_DIR = path.join(process.cwd(), 'database');
 const DB_FILE = path.join(DB_DIR, 'state.json');
